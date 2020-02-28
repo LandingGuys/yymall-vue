@@ -40,6 +40,7 @@ cd vue-mall
 cnpm i
 
 npm run dev
+```
 
 ## 说明
 
@@ -65,7 +66,7 @@ npm run dev
 [XMall-Front](https://github.com/Exrick/xmall-front) 
 基于该项目改造一套更完整的流程 作者[Exrick](https://github.com/Exrick)
 
-[]
+
 
 ## 项目布局
 
