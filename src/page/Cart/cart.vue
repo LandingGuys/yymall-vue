@@ -28,7 +28,7 @@
                       <!--图片-->
                       <div class="items-thumb fl">
                         <img :alt="item.productName"
-                             :src="item.productImg">
+                             :src="item.productMainImage">
                         <a @click="goodsDetails(item.productId)" :title="item.productName" target="_blank"></a>
                       </div>
                       <!--信息-->
@@ -205,6 +205,7 @@
       async _editCheckAll () {
         let checkAll = !this.checkAllFlag
         const res = await editCheckAll({selectAll : checkAll})
+        // console.log(res)
         if(res.status !==0){
             this.$message.error(res.msg)
         }

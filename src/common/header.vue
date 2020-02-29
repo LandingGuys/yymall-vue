@@ -5,7 +5,7 @@
         <div class="w-box">
           <div class="nav-logo">
             <h1>
-              <router-link to="/" title="锤子科技官网">Smartisan</router-link>
+              <router-link to="/" title="智慧药房">智慧药房</router-link>
             </h1>
           </div>
           <div class="right-box">
@@ -56,7 +56,7 @@
                               <div class="cart-item-inner">
                                 <router-link :to="'goodsDetails?productId='+item.productId">
                                   <div class="item-thumb">
-                                    <img :src="item.productImg">
+                                    <img :src="item.productMainImage">
                                   </div>
                                 </router-link>
                                 <div class="item-desc">
@@ -68,7 +68,7 @@
                                     <p class="attrs"><span>白色</span>
                                     </p> <h6><span class="price-icon">¥</span><span
                                     class="price-num">{{item.productPrice}}</span><span
-                                    class="item-num">x {{item.productNum}}</span>
+                                    class="item-num">x {{item.quantity}}</span>
                                   </h6></div>
                                 </div>
 
@@ -316,10 +316,10 @@
       display: flex;
       align-items: center;
       > a {
-        background: url(/static/images/global-logo-red@2x.png) no-repeat 50%;
+        background: url(/static/images/yao1.png) no-repeat 50%;
         background-size: cover;
         display: block;
-        @include wh(50px, 40px);
+        @include wh(50px, 50px);
         text-indent: -9999px;
         background-position: 0 0;
       }

@@ -37,7 +37,7 @@ export const delCartChecked = (params) => {
 }
 // 获取用户地址
 export const addressList = (params) => {
-  return http.fetchPost(`${baseUrl}/user/addressList`, params)
+  return http.fetchGet(`${baseUrl}/shippings`, params)
 }
 // 修改收货地址
 export const addressUpdate = (params) => {

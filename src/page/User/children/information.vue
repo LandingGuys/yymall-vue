@@ -125,19 +125,22 @@
           this.option.img = e.target.result
         }
       },
-      cropper () {
+      async cropper () {
         if (this.option.img) {
           this.$refs.cropper.getCropData((data) => {
             this.imgSrc = data
-            upload({imgData: data}).then(res => {
-              if (res.status === '0') {
-                let path = res.result.path
-                updateheadimage({imageSrc: path}).then(res1 => {
-                  if (res1.status === '0') {
+            // console.log(data)
+            console.log({imgData :data})
+            upload({imgData :data}).then(res => {
+              if (res.status === 0) {
+                let path = res.data.url
+                // console.log(path)
+                updateheadimage({avatarUrl: path}).then(res1 => {
+                  if (res1.status === 0) {
                     let info = this.userInfo
-                    info.avatar = path
+                    info.avatarUrl = path
                     this.RECORD_USERINFO({info: info})
-                    alert('更换成功')
+                    this.$message.success("更换成功")
                     this.editAvatarShow = false
                   }
                 })

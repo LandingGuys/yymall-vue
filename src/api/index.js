@@ -18,11 +18,11 @@ export const register = (params) => {
 }
 // 上传图片
 export const upload = (params) => {
-  return http.fetchPost(`${baseUrl}/user/upload`, params)
+  return http.fetchPost(`${baseUrl}/file/baseUpload`, params)
 }
 // 修改头像
 export const updateheadimage = (params) => {
-  return http.fetchPost(`${baseUrl}/user/updateheadimage`, params)
+  return http.fetchPut(`${baseUrl}/user`, params)
 }
 // 首页接口
 export const productHome = (params) => {

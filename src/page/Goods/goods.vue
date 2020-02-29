@@ -122,9 +122,9 @@
           // priceLte: this.max,
           categoryId: cid
         }
-        console.log(params)
+        // console.log(params)
         const res = await getAllGoods(params)
-        console.log(res)
+        // console.log(res)
         if(res.status === 0){
           this.total = res.data.total
           this.goods = res.data.list
