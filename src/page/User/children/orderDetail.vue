@@ -154,10 +154,10 @@
         })
       },
       orderPayment (orderId) {
-        window.open(window.location.origin + '#/order/payment?orderId=' + orderId)
+        window.open(window.location.origin + '/order/payment?orderId=' + orderId)
       },
       goodsDetails (id) {
-        window.open(window.location.origin + '#/goodsDetails?productId=' + id)
+        window.open(window.location.origin + '/goodsDetails?productId=' + id)
       },
       async _getOrderDet () {
         let params = {
@@ -183,9 +183,9 @@
           }
           this.orderList = res.data.orderItemVoList
           this.orderTotal = await res.data.payment
-          this.userName = res.data.shippingVo.receiverName
-          this.tel = res.data.shippingVo.receiverMobile
-          this.streetName = res.data.shippingVo.receiverCity
+          this.userName = res.data.receiverName
+          this.tel = res.data.receiverPhone
+          this.streetName = res.data.receiverAddress
           this.createTime = res.data.createTime
           this.closeTime = res.data.closeTime
           this.payTime = res.data.paymentTime
@@ -202,8 +202,8 @@
 
       },
       _cancelOrder () {
-        cancelOrder({orderId: this.orderId}).then(res => {
-          if (res.success === true) {
+        cancelOrder({orderNo: this.orderId}).then(res => {
+          if (res.status === 0) {
             this._getOrderDet()
           } else {
             this.message('取消失败')

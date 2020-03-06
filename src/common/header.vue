@@ -232,15 +232,19 @@
             st >= 100 ? this.st = true : this.st = false
           }
           // 计算小圆当前位置
-          let num = this.$refs.num
-          const {left, top} = num.getBoundingClientRect()
-          this.ADD_ANIMATION({cartPositionL: left, cartPositionT: top})
+          let num = document.querySelector('.num')
+          this.positionL = num.getBoundingClientRect().left
+          this.positionT = num.getBoundingClientRect().top
+          this.ADD_ANIMATION({cartPositionL: this.positionL, cartPositionT: this.positionT})
+        }else {
+          return
         }
       },
       // 退出登陆
       _loginOut () {
         loginOut().then(res => {
           removeStore('buyCart')
+          removeStore('token')
           window.location.href = '/'
         })
       }
@@ -316,7 +320,7 @@
       display: flex;
       align-items: center;
       > a {
-        background: url(/static/images/yao1.png) no-repeat 50%;
+        background: url(/static/images/yao.png) no-repeat 50%;
         background-size: cover;
         display: block;
         @include wh(50px, 50px);

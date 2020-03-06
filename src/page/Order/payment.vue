@@ -4,15 +4,56 @@
       <div slot="content">
         <div class="box-inner order-info">
           <h3>提交订单成功</h3>
-          <p class="payment-detail">请在 <span>24 小时内</span>完成支付，超时订单将自动取消。</p>
-          <p class="payment-detail">我们将在您完成支付后的 72 小时内发货</p></div>
+          <p class="payment-detail">请在 <span>30 分钟内</span>完成支付，超时订单将自动取消。</p>
+          <p class="payment-detail" style="color:red">我们不会在您完成支付后的 72 小时内发货，您的支付将用作捐赠</p>
+          <!-- <p class="payment-detail" style="color:red">请仔细填写捐赠信息，避免系统审核失败无法在捐赠名单中显示您的数据</p> -->
+        </div>
+    <div class="p-msg w">
+      <div class="confirm-detail">
+        <div class="info-title">收货信息</div>
+        <p class="info-detail">姓名：{{userName}}</p>
+        <p class="info-detail">联系电话：{{tel}}</p>
+        <p class="info-detail">详细地址：{{streetName}}</p></div>
+    </div>
+    <div class="confirm-table-title">
+      <span class="name">商品信息</span>
+      <div>
+        <span class="price">单价</span>
+        <span class="num">数量</span>
+        <span class="subtotal">小计</span>
+      </div>
+    </div>
+    <!--商品-->
+    <div class="confirm-goods-table">
+      <div class="cart-items" v-for="(item,i) in orderList" :key="i">
+        <div class="name">
+          <div class="name-cell ellipsis">
+            <a @click="goodsDetails(item.productId)" title="" target="_blank">{{item.productName}}</a>
+          </div>
+        </div>
+        <div class="n-b">
+          <div class="price">¥ {{item.currentUnitPrice}}</div>
+          <div class="goods-num">{{item.quantity}}</div>
+          <div class="subtotal">
+            <div class="subtotal-cell"> ¥ {{item.totalPrice}}<br></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--合计-->
+    <div class="order-discount-line">
+      <p style="font-size: 14px;font-weight: bolder;"> <span style="padding-right:47px">商品总计：</span>
+        <span style="font-size: 16px;font-weight: 500;line-height: 32px;">¥ {{orderTotal}}</span>
+      </p>
+      <p><span style="padding-right:30px">运费：</span><span style="font-weight: 700;">+ ¥ 0.00</span></p>
+    </div>
         <!--支付方式-->
         <div class="pay-type">
           <div class="p-title">支付方式</div>
           <div class="pay-item">
             <div :class="{active:payType==1}" @click="payType=1"><img src="/static/images/alipay@2x.png" alt=""></div>
-            <div :class="{active:payType==2}" @click="payType=2"><img src="/static/images/weixinpay@2x.png" alt="">
-            </div>
+            <div :class="{active:payType==2}" @click="payType=2"><img src="/static/images/weixinpay@2x.png" alt=""></div>
+            <!-- <div :class="{active:payType==3}" @click="payType=3"><img src="/static/images/qqpay.png" alt=""></div> -->
           </div>
         </div>
 
@@ -20,11 +61,15 @@
           <div class="box-inner">
             <div>
               <span>
-                应付金额:
+                订单金额：
               </span>
-              <em><span>¥</span>{{checkPrice}}</em>
-              <y-button text="立刻支付"
-                        classStyle="main-btn"
+              <em><span>¥</span>{{orderTotal.toFixed(2)}}</em>
+              <span>
+                实际应付金额：
+              </span>
+              <em><span>¥</span>{{orderTotal.toFixed(2)}}</em>
+              <y-button :text="payNow"
+                        :classStyle="submit?'main-btn':'disabled-btn'"
                         style="width: 120px;height: 40px;font-size: 16px;line-height: 38px"
                         @btnClick="paySuc()"
               ></y-button>
@@ -34,118 +79,194 @@
 
       </div>
     </y-shelf>
-    <!--地址信息-->
-    <div class="p-msg w">
-      <div class="confirm-detail">
-        <div class="info-title">收货信息</div>
-        <p class="info-detail">姓名：{{addList.userName}}</p>
-        <p class="info-detail">联系电话：{{addList.tel}}</p>
-        <p class="info-detail">详细地址：{{addList.streetName}}</p></div>
-    </div>
-    <div class="confirm-table-title">
-      <span class="name">商品信息</span>
-      <div>
-        <span class="subtotal">小计</span>
-        <span class="num">数量</span>
-        <span class="price">单价</span>
-      </div>
-    </div>
-    <!--商品-->
-    <div class="confirm-goods-table">
-      <div class="cart-items" v-for="(item,i) in cartList" :key="i" v-if="item.checked === '1'">
-        <div class="name">
-          <div class="name-cell ellipsis">
-            <a href="javascript:;" title=""
-               target="_blank">{{item.productName}}</a></div>
-        </div>
-        <div class="n-b">
-          <div class="subtotal ">
-            <div class="subtotal-cell"> ¥ {{item.productPrice * item.productNum}}<br></div>
-          </div>
-          <div class="goods-num ">{{item.productNum}}</div>
-          <div class="price ">¥ {{item.productPrice}}</div>
-        </div>
-      </div>
-    </div>
-    <!--合计-->
-    <div class="order-discount-line"><p> 商品总计： <span>¥ {{checkPrice}}</span></p>
-      <p> 运费： <span>+ ¥ 0.00</span></p></div>
+    
   </div>
 </template>
 <script>
   import YShelf from '/components/shelf'
   import YButton from '/components/YButton'
-  import { addressList, getCartList, payMent, productDet } from '/api/goods'
+  import { getOrderDet, payMent } from '/api/goods'
+  import { getStore, setStore } from '/utils/storage'
   export default {
     data () {
       return {
         payType: 1,
         addList: {},
-        cartList: [],
+        orderList: [],
         addressId: 0,
         productId: '',
-        num: ''
+        num: '',
+        userId: '',
+        orderTotal: 0,
+        userName: '',
+        tel: '',
+        streetName: '',
+        payNow: '立刻支付',
+        submit: true,
+        nickName: '',
+        // money: '1.00',
+        info: '',
+        email: '',
+        orderId: '',
+        type: '',
+        moneySelect: '1.00',
+        isCustom: false,
+        maxLength: 30,
+        
       }
     },
     computed: {
       // 选中的总价格
-      checkPrice () {
-        let totalPrice = 0
-        this.cartList && this.cartList.forEach(item => {
-          if (item.checked === '1') {
-            totalPrice += (item.productNum * item.productPrice)
-          }
-        })
-        return totalPrice
-      }
+      // checkPrice () {
+      //   let totalPrice = 0
+      //   this.orderList && this.orderList.forEach(item => {
+      //     if (item.checked === '1') {
+      //       totalPrice += (item.productNum * item.salePrice)
+      //     }
+      //   })
+      //   return totalPrice
+      // }
     },
     methods: {
-      _getCartList () {
-        getCartList().then(res => {
-          this.cartList = res.result
+      checkValid () {
+        if (this.nickName !== '' && this.money !== '' && this.isMoney(this.money) && this.email !== '' && this.isEmail(this.email)) {
+          this.submit = true
+        } else {
+          this.submit = false
+        }
+      },
+      messageFail (m) {
+        this.$message.error({
+          message: m
         })
       },
-      _addressList (params) {
-        addressList(params).then(res => {
-          this.addList = res.result
+      changeSelect (v) {
+        if (v !== 'custom') {
+          this.money = v
+        } else {
+          this.isCustom = true
+          this.money = ''
+        }
+        this.checkValid()
+      },
+      goodsDetails (id) {
+        
+        window.open(window.location.origin + '/goodsDetails?productId=' + id)
+      },
+      async _getOrderDet (orderId) {
+         let params = {
+             orderNo: this.orderId
+        }
+        // console.log(orderId)
+        // const res = await getOrderDet(params)
+        // console.log(res)
+        getOrderDet(params).then(res => {
+          this.orderList = res.data.orderItemVoList
+          this.userName = res.data.receiverName
+          this.tel = res.data.receiverPhone
+          this.streetName = res.data.receiverAddress
+          this.orderTotal = res.data.payment
         })
       },
-      paySuc () {
-        payMent({
-          addressId: this.addressId,
-          orderTotal: this.checkPrice,
-          productId: this.productId,
-          productNum: this.num
-        }).then(res => {
-          if (!res.status) {
-            this.$router.push({path: '/order/paysuccess', query: {price: this.checkPrice}})
-          } else {
-            alert('支付失败')
-          }
+      async paySuc () {
+        this.payNow = '支付中...'
+        this.submit = false
+        if (this.payType === 1) {
+          this.type = 'ALIPAY_PC'
+        } else if (this.payType === 2) {
+          this.type = 'WXPAY_NATIVE'
+        } else {
+          this.type = '其它'
+        }
+        //window.open("http://www.main.wast.club:8080/pay/create" + '?orderId='+this.orderId + '&amount='+this.orderTotal+'&payType='+this.type,'_self')
+        const res = await payMent({
+          orderId: this.orderId,
+          amount: this.orderTotal,
+          payType: this.type
         })
+        if(res.status !== 0){
+          this.payNow = '立刻支付'
+            this.submit = true
+            return this.messageFail(res.msg)
+        }
+        if (this.payType === 1) {
+              this.$router.push({
+                name: 'alipay',
+                params :{
+                  body: res.data.body
+                }
+              })
+              
+              // let routerData = this.$router.resolve({path:'/order/alipay',query:{body: res.data.body}})
+              // //console.log(res.data.body)
+              // // 打开新页面
+              // window.open(routerData.href, '_ blank')
+
+        } else if (this.payType === 2) {
+            this.$router.push({
+              name: 'wechat',
+              params :{
+                  codeUrl: res.data.codeUrl,
+                  orderId: res.data.orderId,
+                  returnUrl: res.data.returnUrl,
+                  ordetTotal: this.orderTotal
+                }
+            })
+        }
+        
+        // payMent({
+        //   orderId: this.orderId,
+        //   amount: this.orderTotal,
+        //   payType: this.type
+        // }).then(res => {
+        //   if (res.status === 0) {
+
+            // setStore('setTime', 90)
+            // setStore('price', this.money)
+            // setStore('isCustom', this.isCustom)
+            // if (this.payType === 1) {
+            //   this.$router.push({path: '/order/alipay'})
+            // } else if (this.payType === 2) {
+            //   this.$router.push({path: '/order/wechat'})
+            // } else if (this.payType === 3) {
+            //   this.$router.push({path: '/order/qqpay'})
+            // } else {
+            //   this.$router.push({path: '/order/alipay'})
+            // }
+        //   } else {
+        //     this.payNow = '立刻支付'
+        //     this.submit = true
+        //     this.messageFail(res.message)
+        //   }
+        // })
       },
-      _productDet (productId) {
-        productDet({productId}).then(res => {
-          let item = res.result
-          item.checked = '1'
-          item.productNum = this.num
-          item.productPrice = item.salePrice
-          this.cartList.push(item)
-        })
+      isMoney (v) {
+        if (v < 0.1) {
+          return false
+        }
+        var regu = /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/
+        var re = new RegExp(regu)
+        if (re.test(v)) {
+          return true
+        } else {
+          return false
+        }
+      },
+      isEmail (v) {
+        var regu = /^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$/
+        var re = new RegExp(regu)
+        if (re.test(v)) {
+          return true
+        } else {
+          return false
+        }
       }
     },
     created () {
-      let query = this.$route.query
-      this.addressId = query.addressId
-      if (this.addressId) {
-        this._addressList({addressId: this.addressId})
-        if (query.productId && query.num) {
-          this.productId = query.productId
-          this.num = query.num
-          this._productDet(this.productId)
-        } else {
-          this._getCartList()
-        }
+      this.userId = getStore('userId')
+      this.orderId = this.$route.query.orderId
+      if (this.orderId) {
+        this._getOrderDet(this.orderId)
       } else {
         this.$router.push({path: '/'})
       }
@@ -247,7 +368,7 @@
       font-size: 24px;
       color: #d44d44;
       font-weight: 700;
-      margin-right: 10px;
+      margin-right: 20px;
       span {
         margin-right: 4px;
         font-size: 16px;
@@ -273,7 +394,7 @@
   }
 
   .confirm-table-title {
-    padding: 3px 0 0 30px;
+    padding: 3px 0 0 33px;
     border-top: 1px solid #D5D5D5;
     line-height: 54px;
     font-weight: bolder;
@@ -283,7 +404,16 @@
     span {
       display: inline-block;
       width: 175px;
-      text-align: center;
+      text-align: left;
+    }
+    .price {
+      padding-left: 80px;
+    }
+    .num {
+      padding-left: 75px;
+    }
+    .subtotal {
+      padding-left: 72px;
     }
   }
 
@@ -330,6 +460,22 @@
   }
 
   .name-cell {
+    padding-left: 33px;
+  }
 
+  .input {
+    width:30%;
+    margin:0 0 1vw 38px;
+  }
+
+  .pay-info {
+    margin-top: -2vw;
+    text-align: center;
+  }
+
+  .money-select {
+    width: 31%;
+    padding-left: 10px;
+    margin-bottom: 1vw;
   }
 </style>

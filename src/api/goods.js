@@ -41,21 +41,27 @@ export const addressList = (params) => {
 }
 // 修改收货地址
 export const addressUpdate = (params) => {
-  return http.fetchPost(`${baseUrl}/user/addressUpdate`, params)
+  return http.fetchPut(`${baseUrl}/shippings/` + params.shippingId, params)
 }
 // 添加收货地址
 export const addressAdd = (params) => {
-  return http.fetchPost(`${baseUrl}/user/addressAdd`, params)
+  return http.fetchPost(`${baseUrl}/shippings`, params)
 }
 // 删除收货地址
 export const addressDel = (params) => {
-  return http.fetchPost(`${baseUrl}/user/addressDel`, params)
+  return http.fetchDelete(`${baseUrl}/shippings/` + params.addressId, params)
+}
+// 提交订单
+export const submitOrder = (params) => {
+  return http.fetchPost(`${baseUrl}/user/orders`, params)
 }
 // 支付
 export const payMent = (params) => {
-  return http.fetchPost(`${baseUrl}/user/payMent`, params)
+  return http.fetchPost(`/pay/create`, params)
 }
-
+export const queryByOrderId = (params) => {
+  return http.fetchGet(`/pay/queryByOrderId`, params)
+}
 // 商品详情
 export const productDet = (params) => {
   return http.fetchGet(`${baseUrl}/products/` + params.id, params)
@@ -70,7 +76,7 @@ export const getOrderDet = (params) => {
 }
 // 取消订单
 export const cancelOrder = (params) => {
-  return http.fetchPost('/member/cancelOrder', params)
+  return http.fetchPut(`${baseUrl}/user/orderDetail/` + params.orderNo, params)
 }
 // 删除订单
 export const delOrder = (params) => {

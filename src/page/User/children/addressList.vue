@@ -20,7 +20,7 @@
             </div>
             <div class="operation">
               <el-button type="primary" icon="el-icon-edit" size="small"  @click="update(item)"></el-button>
-              <el-button type="danger" icon="el-icon-delete" size="small" :data-id="item.id" @click="del(item.addressId,i)"></el-button>
+              <el-button type="danger" icon="el-icon-delete" size="small" :data-id="item.id" @click="del(item.id,i)"></el-button>
             </div>
           </div>
         </div>
@@ -45,13 +45,13 @@
         <div>
           <input type="text" placeholder="收货地址" v-model="msg.streetName">
         </div>
-        <div>
+        <!-- <div>
           <el-checkbox class="auto-login" v-model="msg.isDefault">设为默认</el-checkbox>
-        </div>
+        </div> -->
         <y-button text='保存'
                   class="btn"
                   :classStyle="btnHighlight?'main-btn':'disabled-btn'"
-                  @btnClick="save({userId:userId,addressId:msg.addressId,userName:msg.userName,tel:msg.tel,streetName:msg.streetName,isDefault:msg.isDefault})">
+                  @btnClick="save({shippingId:msg.addressId,receiverName:msg.userName,receiverMobile:msg.tel,receiverCity:msg.streetName})">
         </y-button>
       </div>
     </y-popup>
@@ -103,13 +103,14 @@
         })
       },
       _addressUpdate (params) {
+        // console.log(params)
         addressUpdate(params).then(res => {
           this._addressList()
         })
       },
       _addressAdd (params) {
         addressAdd(params).then(res => {
-          if (res.success === true) {
+          if (res.status === 0) {
             this._addressList()
           } else {
             this.message(res.message)
@@ -126,17 +127,18 @@
       // 保存
       save (p) {
         this.popupOpen = false
-        if (p.addressId) {
+        if (p.shippingId) {
           this._addressUpdate(p)
         } else {
-          delete p.addressId
+          delete p.shippingId
           this._addressAdd(p)
         }
       },
       // 删除
       del (addressId, i) {
+        // console.log(addressId)
         addressDel({addressId: addressId}).then(res => {
-          if (res.success === true) {
+          if (res.status === 0) {
             this.addList.splice(i, 1)
           } else {
             this.message('删除失败')
@@ -148,11 +150,11 @@
         this.popupOpen = true
         if (item) {
           this.popupTitle = '管理收货地址'
-          this.msg.userName = item.userName
-          this.msg.tel = item.tel
-          this.msg.streetName = item.streetName
+          this.msg.userName = item.receiverName
+          this.msg.tel = item.receiverMobile
+          this.msg.streetName = item.receiverCity
           this.msg.isDefault = item.isDefault
-          this.msg.addressId = item.addressId
+          this.msg.addressId = item.id
         } else {
           this.popupTitle = '新增收货地址'
           this.msg.userName = ''

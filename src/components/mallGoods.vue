@@ -44,15 +44,16 @@
         this.$router.push({path: 'goodsDetails/productId=' + id})
       },
       async addCart (id, price, name, img) {
+
         if (!this.showMoveImg) {     // 动画是否在运动
           if (this.login) { // 登录了 直接存在用户名下
             addCart({productId: id}).then(res => {
-                 this.ADD_CART({productId: id, productPrice: price, productName: name, productImg: img})
+                 this.ADD_CART({productId: id, productPrice: price, productName: name, productMainImage: img})
             }).catch(res =>{
                 this.$message.error(res.msg)
             }) 
           } else { // 未登录 vuex
-            this.ADD_CART({productId: id, productPrice: price, productName: name, productImg: img})
+            this.ADD_CART({productId: id, productPrice: price, productName: name, productMainImage: img})
           }
           // 加入购物车动画
           let dom = event.target

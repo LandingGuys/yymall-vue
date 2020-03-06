@@ -6,7 +6,7 @@ export const userLogin = (params) => {
 }
 // 退出登陆
 export const loginOut = (params) => {
-  return http.fetchPost(`${baseUrl}/user/loginOut`, params)
+  return http.fetchPost(`${baseUrl}/user/logout`, params)
 }
 // 用户信息
 export const userInfo = (params) => {
@@ -31,4 +31,11 @@ export const productHome = (params) => {
 export const recommend = (params) => {
   return http.fetchGet('/products/recommend', params)
 }
-
+// 第三方登录
+export const oauth = (params) => {
+  return http.fetchPost(`${baseUrl}/oauth/` + params, params)
+}
+// 极验验证码
+export const geetest = (params) => {
+  return http.fetchGet('/user/geetestInit?t=' + (new Date()).getTime(), params)
+}

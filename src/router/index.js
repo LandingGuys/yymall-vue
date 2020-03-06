@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 const Index = resolve => require(['/page/index'], resolve)
 const Login = resolve => require(['/page/Login/login'], resolve)
+const Register = () => import('/page/Login/register.vue')
 const Home = resolve => require(['/page/Home/home'], resolve)
 const GoodS = resolve => require(['/page/Goods/goods'], resolve)
 const goodsDetails = resolve => require(['/page/Goods/goodsDetails'], resolve)
@@ -18,6 +19,8 @@ const checkout = resolve => require(['/page/Checkout/checkout'], resolve)
 const payment = resolve => require(['/page/Order/payment'], resolve)
 const paysuccess = resolve => require(['/page/Order/paysuccess'], resolve)
 const orderDetail = () => import('/page/User/children/orderDetail.vue')
+const Alipay = () => import('/page/Order/alipay.vue')
+const Wechat = () => import('/page/Order/wechat.vue')
 Vue.use(Router)
 export default new Router({
   mode: 'history',
@@ -34,6 +37,7 @@ export default new Router({
       ]
     },
     {path: '/login', name: 'login', component: Login},
+    {path: '/register', name: 'register', component: Register},
     {path: '/cart', name: 'cart', component: Cart},
     {
       path: '/order',
@@ -41,7 +45,9 @@ export default new Router({
       component: order,
       children: [
         {path: 'paysuccess', name: 'paysuccess', component: paysuccess},
-        {path: 'payment', name: 'payment', component: payment}
+        {path: 'payment', name: 'payment', component: payment},
+        {path: 'alipay', name: 'alipay', component: Alipay},
+        {path: 'wechat', name: 'wechat', component: Wechat}
       ]
     },
     {

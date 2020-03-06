@@ -1,8 +1,6 @@
 <template>
   <div class="checkout">
-    <y-header>
-      <div slot="nav"></div>
-    </y-header>
+    <y-header :showNav="false"></y-header>
     <div class="w" style="padding-top: 40px;">
       <!-- 收货地址 -->
       <y-shelf title="收货信息">
@@ -12,7 +10,7 @@
                 :key="i"
                 class="address pr"
                 :class="{checked:addressId === item.id}"
-                @click="chooseAddress(item.id)">
+                @click="defaultAddress(item.id)">
            <span v-if="addressId === item.id" class="pa">
              <svg viewBox="0 0 1473 1024" width="17.34375" height="12">
              <path
@@ -25,8 +23,8 @@
               <p class="street-name ellipsis">收货地址: {{item.receiverCity}}</p>
               <p>手机号码: {{item.receiverMobile}}</p>
               <div class="operation-section">
-                <span class="update-btn" style="font-size:12px" @click="update(item)">修改</span>
-                <span class="delete-btn" style="font-size:12px" :data-id="item.id" @click="del(item.id)">删除</span>
+                <span class="update-btn" @click="update(item)">修改</span>
+                <span class="delete-btn" :data-id="item.id" @click="del(item.id)">删除</span>
               </div>
             </li>
 
@@ -58,16 +56,16 @@
                       <div class="items-thumb fl">
                         <img :alt="item.productName"
                              :src="item.productMainImage">
-                        <a @click="goodsDetails(item.productId)" :title="item.productName" target="_blank"></a>
+                        <a href="javascript:;" :title="item.productName" target="_blank"></a>
                       </div>
                       <!--信息-->
                       <div class="name hide-row fl">
                         <div class="name-table">
-                          <a @click="goodsDetails(item.productId)" :title="item.productName" target="_blank"
+                          <a href="javascript:;" :title="item.productName" target="_blank"
                              v-text="item.productName"></a>
-                          <!-- <ul class="attribute">
+                          <ul class="attribute">
                             <li>白色</li>
-                          </ul> -->
+                          </ul>
                         </div>
                       </div>
                       <!--商品数量-->
@@ -76,7 +74,9 @@
                         <div class="subtotal" style="font-size: 14px">¥ {{item.productTotalPrice}}</div>
                         <!--数量-->
                         <div class="item-cols-num">
-                          <span v-text="item.quantity"></span>
+                          <div class="select">
+                            <span v-text="item.quantity"></span>
+                          </div>
                         </div>
                         <!--价格-->
                         <div class="price">¥ {{item.productPrice}}</div>
@@ -97,10 +97,10 @@
                     </div>
                   </div>
                   <y-button class="big-main-btn"
-                            :classStyle="submit?'disabled-btn':'main-btn'"
+                            classStyle="main-btn"
                             style="margin: 0;width: 130px;height: 50px;line-height: 50px;font-size: 16px"
-                            :text="submitOrder"
-                            @btnClick="_submitOrder">
+                            text="提交订单"
+                            @btnClick="createOrder">
                   </y-button>
                 </div>
               </div>
@@ -121,7 +121,7 @@
             <input type="text" placeholder="收货地址" v-model="msg.streetName">
           </div>
           <div>
-            <el-checkbox class="auto-login" v-model="msg.isDefault">设为默认</el-checkbox>
+            <span><input type="checkbox" v-model="msg.isDefault" style="margin-right: 5px;">设为默认</span>
           </div>
           <y-button text='保存'
                     class="btn"
@@ -135,19 +135,18 @@
   </div>
 </template>
 <script>
-  import { getCartList, addressList, addressUpdate, addressAdd, addressDel, productDet, submitOrder } from '/api/goods'
+  import { getCartList, addressList, addressUpdate, addressAdd, addressDel, productDet, createOrder} from '/api/goods'
   import YShelf from '/components/shelf'
   import YButton from '/components/YButton'
   import YPopup from '/components/popup'
   import YHeader from '/common/header'
   import YFooter from '/common/footer'
-  import { getStore } from '/utils/storage'
   export default {
     data () {
       return {
         cartList: [],
         addList: [],
-        addressId: '0',
+        addressId: '1',
         popupOpen: false,
         popupTitle: '管理收货地址',
         num: '', // 立刻购买
@@ -158,14 +157,7 @@
           tel: '',
           streetName: '',
           isDefault: false
-        },
-        userName: '',
-        tel: '',
-        streetName: '',
-        userId: '',
-        orderTotal: 0,
-        submit: false,
-        submitOrder: '提交订单'
+        }
       }
     },
     computed: {
@@ -181,33 +173,21 @@
             totalPrice += (item.quantity * item.productPrice)
           }
         })
-        this.orderTotal = totalPrice
         return totalPrice
       }
     },
     methods: {
-      message (m) {
-        this.$message.error({
-          message: m
-        })
-      },
-      goodsDetails (id) {
-        window.open(window.location.origin + '/goodsDetails?productId=' + id)
-      },
       _getCartList () {
         getCartList().then(res => {
           this.cartList = res.data.cartProductVoList
         })
       },
       _addressList () {
-        addressList({userId: this.userId}).then(res => {
+        addressList().then(res => {
           let data = res.data.list
           if (data.length) {
             this.addList = data
             this.addressId = data[0].addressId || '1'
-            this.userName = data[0].receiverName
-            this.tel = data[0].receiverMobile
-            this.streetName = data[0].receiverCity
           } else {
             this.addList = []
           }
@@ -220,7 +200,7 @@
       },
       _addressAdd (params) {
         addressAdd(params).then(res => {
-          if (res.status === 0) {
+           if (res.status === 0) {
             this._addressList()
           } else {
             this.message(res.message)
@@ -232,63 +212,22 @@
           this._addressList()
         })
       },
-      // 提交订单后跳转付款页面
-      _submitOrder () {
-        this.submitOrder = '提交订单中...'
-        this.submit = true
-        var array = []
-        if (this.addressId === '0') {
-          this.message('请选择收货地址')
-          this.submitOrder = '提交订单'
-          this.submit = false
-          return
-        }
-        if (this.cartList.length === 0) {
-          this.message('非法操作')
-          this.submitOrder = '提交订单'
-          this.submit = false
-          return
-        }
-        for (var i = 0; i < this.cartList.length; i++) {
-          if (this.cartList[i].productSelected === true) {
-            array.push(this.cartList[i])
-          }
-        }
-        // let params = {
-        //   // userId: this.userId,
-        //   // tel: this.tel,
-        //   // userName: this.userName,
-        //   // streetName: this.streetName,
-        //   // goodsList: array,
-        //   // orderTotal: this.orderTotal
-        //   shippingId: this.addressId
-        // }
-        submitOrder({receiverName:this.userName,receiverPhone:this.tel,receiverAddress:this.streetName}).then(res => {
-          if (res.status === 0) {
-            this.payment(res.data.orderNo)
-          } else {
-            this.message(res.message)
-            this.submitOrder = '提交订单'
-            this.submit = false
-          }
-        })
-      },
       // 付款
-      payment (orderNo) {
+      createOrder () {
         // 需要拿到地址id
         this.$router.push({
+
           path: '/order/payment',
           query: {
-            'orderId': orderNo
+            'addressId': this.addressId,
+            'productId': this.productId,
+            'num': this.num
           }
         })
       },
       // 选择地址
-      chooseAddress (addressId) {
-        this.addressId = addressId
-        // this.userName = userName
-        // this.tel = tel
-        // this.streetName = streetName
+      defaultAddress (id) {
+        this.addressId = id
       },
       // 修改
       update (item) {
@@ -311,20 +250,20 @@
       },
       // 保存
       save (p) {
-        this.popupOpen = false
         if (p.shippingId) {
           this._addressUpdate(p)
         } else {
           delete p.shippingId
           this._addressAdd(p)
         }
+        this.popupOpen = false
       },
       // 删除
       del (addressId) {
-        this._addressDel({addressId})
+        this._addressDel({shippingId: addressId})
       },
       _productDet (productId) {
-        productDet({params: {productId}}).then(res => {
+        productDet({productId}).then(res => {
           let item = res.result
           item.checked = '1'
           item.productImg = item.productImageBig
@@ -335,7 +274,6 @@
       }
     },
     created () {
-      this.userId = getStore('userId')
       let query = this.$route.query
       if (query.productId && query.num) {
         this.productId = query.productId
@@ -527,7 +465,6 @@
         line-height: 140px;
       }
       /*数量*/
-      .subtotal,
       .item-cols-num {
         padding-top: 50px;
         line-height: 40px;
