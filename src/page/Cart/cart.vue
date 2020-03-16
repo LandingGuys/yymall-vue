@@ -48,7 +48,7 @@
                       <!--商品数量-->
                       <div>
                         <!--总价格-->
-                        <div class="subtotal" style="font-size: 14px">¥ {{item.productPrice * item.quantity}}</div>
+                        <div class="subtotal" style="font-size: 14px">¥ {{item.productPrice * item.quantity | keepTwoNum}}</div>
                         <!--数量-->
                         <!-- <span>{{item.quantity}}</span> -->
                         <!-- <buy-num :num="item.quantity"
@@ -141,7 +141,7 @@
       return {
         userId: 0,
         checkoutNow: '现在结算',
-        submit: true,
+        submit: true
       }
     },
     computed: {
@@ -168,6 +168,11 @@
         })
         return Number(totalNum)
       },
+      //计算每一种商品的总价格
+      productTotalPrice () {
+          this.totalprice = item.quantity * item.productPrice
+         return this.totalprice.toFixed(2)
+      },
       // 选中的总价格
       checkPrice () {
         var totalPrice = 0
@@ -176,7 +181,7 @@
             totalPrice += item.quantity * item.productPrice
           }
         })
-        return totalPrice
+        return totalPrice.toFixed(2)
       },
       // 选中的商品数量
       checkNum () {
@@ -199,7 +204,7 @@
         })
       },
       goodsDetails (id) {
-        window.open(window.location.origin + '/goodsDetails?productId=' + id)
+        window.open(window.location.origin + '/#/goodsDetails?productId=' + id)
       },
       // 全选
       async _editCheckAll () {
@@ -285,6 +290,12 @@
     mounted () {
       this.userId = getStore('userId')
       this.INIT_BUYCART()
+    },
+    filters:{
+      keepTwoNum:function(value){
+        value =Number(value)
+        return value.toFixed(2)
+      }
     },
     components: {
       YButton,

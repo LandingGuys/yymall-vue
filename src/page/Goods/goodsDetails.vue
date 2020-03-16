@@ -30,15 +30,23 @@
         </div>
         <div class="num">
           <span class="params-name">数量</span>
-          <buy-num @edit-num="editNum" :limit="Number(product.limit_num)"></buy-num>
+         <!-- <buy-num @edit-num="editNum" :limit="Number(product.limit_num)"></buy-num> -->
+
+           <el-input-number 
+                  v-model="productNum" 
+                  @change="editNum" 
+                  :min="1" 
+                  size="mini"
+            >
+            </el-input-number>
         </div>
         <div class="buy">
           <y-button text="加入购物车"
-                    @btnClick="addCart(product.productId,product.salePrice,product.productName,product.productImageBig)"
+                    @btnClick="addCart(product.id,product.price,product.name,big)"
                     classStyle="main-btn"
                     style="width: 145px;height: 50px;line-height: 48px"></y-button>
           <y-button text="现在购买"
-                    @btnClick="checkout(product.productId)"
+                    @btnClick="checkout(product.id)"
                     style="width: 145px;height: 50px;line-height: 48px"></y-button>
         </div>
       </div>
@@ -87,27 +95,17 @@
     methods: {
       ...mapMutations(['ADD_CART', 'ADD_ANIMATION', 'SHOW_CART']),
       async _productDet (productId) {
-        console.log(productId)
         let params={
           id: productId
         }
-        // console.log(params)
         const res = await productDet(params)
-        console.log(res)
         if(res.status === 0){
           let result =res.data
           this.product = result
           this.productMsg = result.detail || ''
           this.big = result.mainImage
-          // this.small = result.subImages
+          //this.small = result.subImages
         }
-        // productDet(params).then(res => {
-        //   let result = res.result
-        //   this.product = result
-        //   this.productMsg = result.productMsg || ''
-        //   this.small = result.productImageSmall
-        //   this.big = this.small[0]
-        // })
       },
       addCart (id, price, name, img) {
         if (!this.showMoveImg) {     // 动画是否在运动
@@ -118,8 +116,8 @@
                 productId: id,
                 productPrice: price,
                 productName: name,
-                productImg: img,
-                productNum: this.productNum
+                productMainImage: img,
+                quantity: this.productNum
               })
             })
           } else { // 未登录 vuex
@@ -127,8 +125,8 @@
               productId: id,
               productPrice: price,
               productName: name,
-              productImg: img,
-              productNum: this.productNum
+              productMainImage: img,
+              quantity: this.productNum,
             })
           }
           // 加入购物车动画
@@ -147,7 +145,9 @@
         this.$router.push({path: '/checkout', query: {productId, num: this.productNum}})
       },
       editNum (num) {
+        // console.log(num)
         this.productNum = num
+        // console.log(this.productNum)
       }
     },
     components: {

@@ -150,8 +150,7 @@
         this.checkValid()
       },
       goodsDetails (id) {
-        
-        window.open(window.location.origin + '/goodsDetails?productId=' + id)
+        window.open(window.location.origin + '/#/goodsDetails?productId=' + id,'_self')
       },
       async _getOrderDet (orderId) {
          let params = {
@@ -196,12 +195,6 @@
                   body: res.data.body
                 }
               })
-              
-              // let routerData = this.$router.resolve({path:'/order/alipay',query:{body: res.data.body}})
-              // //console.log(res.data.body)
-              // // 打开新页面
-              // window.open(routerData.href, '_ blank')
-
         } else if (this.payType === 2) {
             this.$router.push({
               name: 'wechat',
@@ -213,32 +206,6 @@
                 }
             })
         }
-        
-        // payMent({
-        //   orderId: this.orderId,
-        //   amount: this.orderTotal,
-        //   payType: this.type
-        // }).then(res => {
-        //   if (res.status === 0) {
-
-            // setStore('setTime', 90)
-            // setStore('price', this.money)
-            // setStore('isCustom', this.isCustom)
-            // if (this.payType === 1) {
-            //   this.$router.push({path: '/order/alipay'})
-            // } else if (this.payType === 2) {
-            //   this.$router.push({path: '/order/wechat'})
-            // } else if (this.payType === 3) {
-            //   this.$router.push({path: '/order/qqpay'})
-            // } else {
-            //   this.$router.push({path: '/order/alipay'})
-            // }
-        //   } else {
-        //     this.payNow = '立刻支付'
-        //     this.submit = true
-        //     this.messageFail(res.message)
-        //   }
-        // })
       },
       isMoney (v) {
         if (v < 0.1) {

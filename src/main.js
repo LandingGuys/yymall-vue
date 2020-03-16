@@ -20,8 +20,9 @@ Vue.use(VueLazyload, {
 })
 Vue.config.productionTip = false
 Vue.prototype.$message = Element.Message
+
 // 不需要登陆的页面 => 白名单
-const whiteList = ['/home', '/goods', '/login', '/goodsDetails', '/register']
+const whiteList = ['/home', '/goods', '/login', '/goodsDetails', '/register', '/oauth']
 router.beforeEach(function (to, from, next) {
   userInfo().then(res => {
     // 没登录

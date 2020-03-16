@@ -69,7 +69,7 @@ export default {
             if(res.data.platformStatus !=null && res.data.platformStatus==='SUCCESS'){
                 // this.$router.push(this.returnUrl)
                  clearInterval(this.timer)
-                 this.$router.push({path:"/order/paysuccess",query:{price:this.ordetTotal} })
+                 this.$router.push({path:"/order/paysuccess"})
                 //window.open(this.returnUrl,'_self ')
 
             }

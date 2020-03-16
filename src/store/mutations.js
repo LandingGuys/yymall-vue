@@ -56,7 +56,7 @@ export default {
     }
     if (!cart.length || falg) {
       goods.quantity = quantity
-      goods.productSelected = true
+      goods.productSelected = false
       cart.push(goods)
     }
     state.cartList = cart

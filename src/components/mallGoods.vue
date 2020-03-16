@@ -36,7 +36,9 @@
       msg: {}
     },
     data () {
-      return {}
+      return {
+        productSelected: false
+      }
     },
     methods: {
       ...mapMutations(['ADD_CART', 'ADD_ANIMATION', 'SHOW_CART']),

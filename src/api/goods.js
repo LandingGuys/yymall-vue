@@ -82,3 +82,8 @@ export const cancelOrder = (params) => {
 export const delOrder = (params) => {
   return http.fetchPost(`${baseUrl}/users/delOrder`, params)
 }
+
+// 快速搜索
+export const getQuickSearch = (params) => {
+  return http.fetchGet(`${baseUrl}/products/search`, params)
+}

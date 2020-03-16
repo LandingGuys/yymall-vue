@@ -16,6 +16,10 @@ export const userInfo = (params) => {
 export const register = (params) => {
   return http.fetchPost(`${baseUrl}/user/register`, params)
 }
+// 注册账号
+export const email = (params) => {
+  return http.fetchGet(`${baseUrl}/user/email`, params)
+}
 // 上传图片
 export const upload = (params) => {
   return http.fetchPost(`${baseUrl}/file/baseUpload`, params)
@@ -35,7 +39,8 @@ export const recommend = (params) => {
 export const oauth = (params) => {
   return http.fetchPost(`${baseUrl}/oauth/` + params, params)
 }
+
 // 极验验证码
-export const geetest = (params) => {
-  return http.fetchGet('/user/geetestInit?t=' + (new Date()).getTime(), params)
-}
+// export const geetest = (params) => {
+//   return http.fetchGet('/user/geetestInit?t=' + (new Date()).getTime(), params)
+// }

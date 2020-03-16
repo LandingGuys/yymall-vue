@@ -8,30 +8,60 @@
             <ul class="common-form">
               <li class="username border-1p">
                 <div style="margin-top: 40px;" class="input">
-                  <input type="text"
-                         v-model="registered.userName" placeholder="账号"
-                         @keyup="registered.userName=registered.userName.replace(/[^\w\.\/]/ig,'')">
+                  <input type="text" class="m-input"
+                         v-model="registered.userName" placeholder="昵称"
+                        >
                 </div>
               </li>
               <li>
                 <div class="input">
-                  <input type="password"
+                  <!-- <el-input class="el-input" placeholder="请输入密码" v-model="registered.userPwd" show-password></el-input> -->
+                  <input class="m-input" type="password" 
                          v-model="registered.userPwd"
-                         placeholder="密码">
+                         placeholder="密码" >
                 </div>
               </li>
               <li>
                 <div class="input">
-                  <input type="password"
+                   <!-- <el-input class="el-input" placeholder="请再次输入密码" v-model="registered.userPwd" show-password></el-input> -->
+                  <input class="m-input" type="password"
                          v-model="registered.userPwd2"
                          placeholder="重复密码">
                 </div>
               </li>
               <li>
+                  <div class="input">
+                      <InputGroup class="m-input"
+                          type="text"
+                          placeholder="请输入手机号或邮箱"
+                          v-model="registered.phoneOrEmail" 
+                          :btnTitle="btnTitle"
+                          :disabled="disabled"
+                          :error="errors.phoneOrEmail"
+                          @btnClick="getVerifyCode"
+                      />
+                        <!-- <input type="text"
+                         v-model="phoneOrEmail"
+                         placeholder="请输入手机号或邮箱">
+                        <el-button type="text" v-if="btnTitle" @click="getVerifyCode" :disabled="disabled">{{btnTitle}}</el-button> -->
+                  </div>
+              </li>
+              <li>
+                <div class="input">
+                      <InputGroup class="m-input"
+                          type="number"
+                          v-model="registered.verifyCode"
+                          placeholder="验证码"
+                          :error="errors.code"
+                      />
+                </div>
+               
+              </li>
+              <!-- <li>
                 <div id="captcha">
                   <p id="wait">正在加载验证码...</p>
                 </div>
-              </li>
+              </li> -->
             </ul>
             <el-checkbox class="agree" v-model="agreement">
               我已阅读并同意遵守 
@@ -40,7 +70,7 @@
             </el-checkbox>
             <div style="margin-bottom: 30px;">
               <y-button
-                :classStyle="registered.userPwd&&registered.userPwd2&&registered.userName&&registxt==='注册'?'main-btn':'disabled-btn'"
+                :classStyle="registered.userPwd&&registered.userPwd2&&registered.userName&&registered.phoneOrEmail&&registered.verifyCode&&registxt==='注册'?'main-btn':'disabled-btn'"
                 :text="registxt"
                 style="margin: 0;width: 100%;height: 48px;font-size: 18px;line-height: 48px"
                 @btnClick="regist"
@@ -51,7 +81,7 @@
             <ul class="common-form pr">
               <!-- <li class="pa" style="left: 0;top: 0;margin: 0;color: #d44d44">{{registered.errMsg}}</li> -->
               <li style="text-align: center;line-height: 48px;margin-bottom: 0;font-size: 12px;color: #999;">
-                <span>如果您已拥有 XMall 账号，则可在此</span>
+                <span>如果您已拥有账号，则可在此</span>
                 <a href="javascript:;"
                    style="margin: 0 5px"
                    @click="toLogin">登陆</a>
@@ -63,16 +93,22 @@
     </div>
   </div>
 </template>
-<script src="../../../static/geetest/gt.js"></script>
+
 <script>
 import YFooter from '/common/footer'
 import YButton from '/components/YButton'
-import { register, geetest } from '/api/index.js'
-require('../../../static/geetest/gt.js')
+import InputGroup from '/components/inputGroup'
+import { register, email } from '/api/index.js'
+// require('../../../static/geetest/gt.js')
 var captcha
 export default {
   data () {
     return {
+      // phoneOrEmail:"", //手机号or邮箱
+      // verifyCode:"", //验证码
+      btnTitle:"获取验证码",
+      disabled:false,  //是否可点击
+      errors:{}, //验证提示信息
       cart: [],
       loginPage: true,
       ruleForm: {
@@ -84,6 +120,8 @@ export default {
         userName: '',
         userPwd: '',
         userPwd2: '',
+        phoneOrEmail:"", //手机号or邮箱
+        verifyCode:"", //验证码
         errMsg: ''
       },
       agreement: false,
@@ -163,32 +201,108 @@ export default {
           }
         })
     },
-    init_geetest () {
-      geetest().then(res => {
-        this.statusKey = res.statusKey
-        window.initGeetest({
-          gt: res.gt,
-          challenge: res.challenge,
-          new_captcha: res.new_captcha,
-          offline: !res.success,
-          product: 'popup',
-          width: '100%'
-        }, function (captchaObj) {
-          captcha = captchaObj
-          captchaObj.appendTo('#captcha')
-          captchaObj.onReady(function () {
-            document.getElementById('wait').style.display = 'none'
-          })
-        })
-      })
-    }
+    async getVerifyCode(){
+      // console.log(this.registered.phoneOrEmail)
+      if(!this.registered.phoneOrEmail) {
+        this.errors = {
+        phoneOrEmail:"手机号码或邮箱不能为空"
+      } 
+      } else {
+        if(this.registered.phoneOrEmail.indexOf("@") > 0){
+          if(this.validateEmail()){
+            this.validateBtn()
+            //邮箱请求
+            let params ={
+              email: this.registered.phoneOrEmail
+            }
+            const res = await email(params)
+            if(res.status !== 0){
+              this.$message.error(res.msg)
+            }
+          }
+        } else {
+          if(this.validatePhone()){
+            this.validateBtn()
+            //手机号请求
+
+          }
+        }
+      }
+      // if(this.validatePhone()){
+      //   console.log("111")
+      //     this.validateBtn()
+      //     //发送网络请求
+      // }
+    },
+    validatePhone(){
+      //判断输入的手机号是否合法
+      // console.log(this.phoneOrEmail)
+       if(!/^1[345678]\d{9}$/.test(this.registered.phoneOrEmail)) {
+        this.errors = {
+        phoneOrEmail:"请输入正确的手机号或邮箱"
+      }
+        // return false
+      } else {
+        this.errors ={}
+        return true
+      }
+  },
+  validateEmail(){
+      //判断输入的邮箱是否合法
+      //console.log(this.phoneOrEmail)
+      var re=/^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/
+      if(!re.test(this.registered.phoneOrEmail)) {
+        this.errors = {
+        phoneOrEmail:"请输入正确的手机号或邮箱"
+      }
+        // return false
+      } else {
+        this.errors ={}
+        return true
+      }
+  },  
+  validateBtn(){
+      //倒计时
+      let time = 60;
+      let timer = setInterval(() => {
+      if(time == 0) {
+        clearInterval(timer);
+        this.disabled = false;
+        this.btnTitle = "获取验证码";
+      } else {
+        this.btnTitle =time + '秒后重试';
+        this.disabled = true;
+        time--
+      }
+      },1000)
+    },    
+    // init_geetest () {
+    //   geetest().then(res => {
+    //     this.statusKey = res.statusKey
+    //     window.initGeetest({
+    //       gt: res.gt,
+    //       challenge: res.challenge,
+    //       new_captcha: res.new_captcha,
+    //       offline: !res.success,
+    //       product: 'popup',
+    //       width: '100%'
+    //     }, function (captchaObj) {
+    //       captcha = captchaObj
+    //       captchaObj.appendTo('#captcha')
+    //       captchaObj.onReady(function () {
+    //         document.getElementById('wait').style.display = 'none'
+    //       })
+    //     })
+    //   })
+    // }
   },
   mounted () {
-    this.init_geetest()
+    // this.init_geetest()
   },
   components: {
     YFooter,
-    YButton
+    YButton,
+    InputGroup
   }
 }
 </script>
@@ -204,15 +318,21 @@ export default {
     height: 50px;
     display: flex;
     align-items: center;
-    input {
+    .m-input {
       font-size: 16px;
       width: 100%;
       height: 100%;
-      padding: 10px 15px;
+      padding-left: 15px;
       box-sizing: border-box;
       border: 1px solid #ccc;
       border-radius: 6px;
     }
+    // .el-input {
+    //   font-size: 16px;
+    //   width: 100%;
+    //   height: 100%;
+    //   border-radius: 6px;
+    // }
   }
   .wrapper {
     background: url(/static/images/bg_9b9dcb65ff.png) repeat;

@@ -104,10 +104,10 @@
         this._orderList()
       },
       orderPayment (orderId) {
-        window.open(window.location.origin + '/order/payment?orderId=' + orderId)
+        window.open(window.location.origin + '/#/order/payment?orderId=' + orderId)
       },
       goodsDetails (id) {
-        window.open(window.location.origin + '/goodsDetails?productId=' + id)
+        window.open(window.location.origin + '/#/goodsDetails?productId=' + id)
       },
       orderDetail (orderNo) {
         this.$router.push({
@@ -139,7 +139,7 @@
         }
         // console.log(params)
         const res = await orderList(params)
-        // console.log(res)
+         console.log(res)
         if(res.status === 0){
           this.orderList = res.data.list
           this.total = res.data.total

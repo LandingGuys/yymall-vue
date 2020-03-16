@@ -135,7 +135,7 @@
   </div>
 </template>
 <script>
-  import { getCartList, addressList, addressUpdate, addressAdd, addressDel, productDet, submitOrder } from '/api/goods'
+  import { getCartList, addressList, addressUpdate, addressAdd, addressDel, productDet, submitOrder, addCart} from '/api/goods'
   import YShelf from '/components/shelf'
   import YButton from '/components/YButton'
   import YPopup from '/components/popup'
@@ -192,7 +192,7 @@
         })
       },
       goodsDetails (id) {
-        window.open(window.location.origin + '/goodsDetails?productId=' + id)
+        window.open(window.location.origin + '/#/goodsDetails?productId=' + id)
       },
       _getCartList () {
         getCartList().then(res => {
@@ -233,7 +233,7 @@
         })
       },
       // 提交订单后跳转付款页面
-      _submitOrder () {
+      async _submitOrder () {
         this.submitOrder = '提交订单中...'
         this.submit = true
         var array = []
@@ -250,19 +250,15 @@
           return
         }
         for (var i = 0; i < this.cartList.length; i++) {
-          if (this.cartList[i].productSelected === true) {
-            array.push(this.cartList[i])
+          // console.log(this.cartList[i])
+          if (this.cartList[i].productSelected === true && this.cartList[i].id) {
+             const res = await addCart({productId: this.cartList[i].id, productNum: this.cartList[i].quantity, selected: this.cartList[i].productSelected})
+            // array.push(this.cartList[i])
+            if(res.status !== 0){
+              this.message(res.msg)
+            }
           }
-        }
-        // let params = {
-        //   // userId: this.userId,
-        //   // tel: this.tel,
-        //   // userName: this.userName,
-        //   // streetName: this.streetName,
-        //   // goodsList: array,
-        //   // orderTotal: this.orderTotal
-        //   shippingId: this.addressId
-        // }
+        } 
         submitOrder({receiverName:this.userName,receiverPhone:this.tel,receiverAddress:this.streetName}).then(res => {
           if (res.status === 0) {
             this.payment(res.data.orderNo)
@@ -324,12 +320,19 @@
         this._addressDel({addressId})
       },
       _productDet (productId) {
-        productDet({params: {productId}}).then(res => {
-          let item = res.result
-          item.checked = '1'
-          item.productImg = item.productImageBig
-          item.productNum = this.num
-          item.productPrice = item.salePrice
+        let params={
+          id: productId
+        }
+        productDet(params).then(res => {
+          console.log(res)
+          let item = res.data
+          item.productSelected = true
+          item.productId = item.id
+          item.productMainImage = item.mainImage
+          item.productName = item.name
+          item.quantity = this.num
+          item.productPrice = item.price
+          item.productTotalPrice= item.price * item.quantity
           this.cartList.push(item)
         })
       }

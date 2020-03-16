@@ -9,23 +9,25 @@
           <ul class="common-form">
             <li class="username border-1p">
               <div class="input">
-                <input type="text" v-model="ruleForm.userName" placeholder="账号">
+                <!-- <input type="text" v-model="ruleForm.userName" placeholder="账号"> -->
+                <el-input v-model="ruleForm.userName" placeholder="请输入账号/邮箱/手机号"></el-input>
               </div>
             </li>
             <li>
               <div class="input">
-                <input type="password" v-model="ruleForm.userPwd" @keyup.enter="login" placeholder="密码">
+                <el-input placeholder="请输入密码" v-model="ruleForm.userPwd" @keyup.enter="login" show-password></el-input>
+                <!-- <input type="password" v-model="ruleForm.userPwd" @keyup.enter="login" placeholder="密码" show-password> -->
               </div>
             </li>
-            <li>
+            <!-- <li>
               <div id="captcha">
                 <p id="wait">正在加载验证码...</p>
               </div>
-            </li>
+            </li> -->
             <li style="text-align: right" class="pr">
               <el-checkbox class="auto-login" v-model="autoLogin">记住密码</el-checkbox>
               <!-- <span class="pa" style="top: 0;left: 0;color: #d44d44">{{ruleForm.errMsg}}</span> -->
-              <a href="javascript:;" class="register" @click="toRegister">注册 XMall 账号</a>
+              <a href="javascript:;" class="register" @click="toRegister">注册</a>
               <a style="padding: 1px 0 0 10px" @click="open('找回密码','请联系作者邮箱找回密码或使用测试账号登录：test | test')">忘记密码 ?</a>
             </li>
           </ul>
@@ -51,19 +53,24 @@
             <a @click="_oauth(weibo)"><img  style="height: 25px; margin-top: 22px; margin-left:20px" src="/static/svg/weibo.svg"></a>
             <a @click="_oauth(github)"><img  style="height: 25px; margin-top: 22px; margin-left:20px" src="/static/svg/github.svg"></a>
           </div>
+          <!-- <el-dialog
+            :visible.sync="dialogVisible"
+            width="50%"
+            :before-close="handleClose">
+          </el-dialog> -->
         </div>
       </div>
     </div>
   </div>
 </template>
-<script src="../../../static/geetest/gt.js"></script>
+
 <script>
 import YFooter from '/common/footer'
 import YButton from '/components/YButton'
-import { userLogin, geetest, oauth } from '/api/index.js'
+import { userLogin, oauth } from '/api/index.js'
 import { addCart } from '/api/goods.js'
 import { setStore, getStore, removeStore } from '/utils/storage.js'
-require('../../../static/geetest/gt.js')
+// require('../../../static/geetest/gt.js')
 var captcha
 export default {
   data () {
@@ -98,6 +105,13 @@ export default {
     }
   },
   methods: {
+    handleClose(done) {
+        this.$confirm('确认关闭？')
+          .then(_ => {
+            done();
+          })
+          .catch(_ => {});
+      },
     open (t, m) {
       this.$notify.info({
         title: t,
@@ -152,7 +166,7 @@ export default {
           cartArr.push({
             userId: getStore('userId'),
             productId: item.productId,
-            productNum: item.productNum
+            productNum: item.quantity
           })
         })
       }
@@ -190,6 +204,7 @@ export default {
           // 登录后添加当前缓存中的购物车
           if (this.cart.length) {
             for (var i = 0; i < this.cart.length; i++) {
+              console.log(this.cart[i])
               addCart(this.cart[i]).then(res => {
                 if (res.status === 0) {
                 }
@@ -206,31 +221,31 @@ export default {
           }
         } else {
           this.logintxt = '登录'
-          this.message(res.result.message)
+          this.message(res.msg)
           captcha.reset()
           return false
         }
       })
     },
-    init_geetest () {
-      geetest().then(res => {
-        this.statusKey = res.statusKey
-        window.initGeetest({
-          gt: res.gt,
-          challenge: res.challenge,
-          new_captcha: res.new_captcha,
-          offline: !res.success,
-          product: 'popup',
-          width: '100%'
-        }, function (captchaObj) {
-          captcha = captchaObj
-          captchaObj.appendTo('#captcha')
-          captchaObj.onReady(function () {
-            document.getElementById('wait').style.display = 'none'
-          })
-        })
-      })
-    },
+    // init_geetest () {
+    //   geetest().then(res => {
+    //     this.statusKey = res.statusKey
+    //     window.initGeetest({
+    //       gt: res.gt,
+    //       challenge: res.challenge,
+    //       new_captcha: res.new_captcha,
+    //       offline: !res.success,
+    //       product: 'popup',
+    //       width: '100%'
+    //     }, function (captchaObj) {
+    //       captcha = captchaObj
+    //       captchaObj.appendTo('#captcha')
+    //       captchaObj.onReady(function () {
+    //         document.getElementById('wait').style.display = 'none'
+    //       })
+    //     })
+    //   })
+    // },
     async _oauth(params){
       // console.log(params)
      const res = await oauth(params)
@@ -239,6 +254,7 @@ export default {
        this.$message.error("第三方登录失败")
      }
     this.url = res.data.url;
+    //window.location.href= this.url
     window.open(this.url)
     }
   },

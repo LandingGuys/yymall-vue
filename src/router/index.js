@@ -3,6 +3,7 @@ import Router from 'vue-router'
 const Index = resolve => require(['/page/index'], resolve)
 const Login = resolve => require(['/page/Login/login'], resolve)
 const Register = () => import('/page/Login/register.vue')
+const Oauth = () => import('/page/Login/oauth.vue')
 const Home = resolve => require(['/page/Home/home'], resolve)
 const GoodS = resolve => require(['/page/Goods/goods'], resolve)
 const goodsDetails = resolve => require(['/page/Goods/goodsDetails'], resolve)
@@ -21,9 +22,12 @@ const paysuccess = resolve => require(['/page/Order/paysuccess'], resolve)
 const orderDetail = () => import('/page/User/children/orderDetail.vue')
 const Alipay = () => import('/page/Order/alipay.vue')
 const Wechat = () => import('/page/Order/wechat.vue')
+const Search = () => import('/page/Search/search.vue')
+const RefreshSearch = () => import('/page/Refresh/refreshsearch.vue')
+
 Vue.use(Router)
 export default new Router({
-  mode: 'history',
+  //
   routes: [
     {
       path: '/',
@@ -38,7 +42,9 @@ export default new Router({
     },
     {path: '/login', name: 'login', component: Login},
     {path: '/register', name: 'register', component: Register},
+    {path: '/oauth', name: 'oauth', component: Oauth},
     {path: '/cart', name: 'cart', component: Cart},
+    {path: '/refreshsearch', name: 'refreshsearch', component: RefreshSearch},
     {
       path: '/order',
       name: 'order',
@@ -47,7 +53,8 @@ export default new Router({
         {path: 'paysuccess', name: 'paysuccess', component: paysuccess},
         {path: 'payment', name: 'payment', component: payment},
         {path: 'alipay', name: 'alipay', component: Alipay},
-        {path: 'wechat', name: 'wechat', component: Wechat}
+        {path: 'wechat', name: 'wechat', component: Wechat},
+        {path: '/search', name: 'search', component: Search}
       ]
     },
     {

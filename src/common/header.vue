@@ -8,10 +8,39 @@
               <router-link to="/" title="智慧药房">智慧药房</router-link>
             </h1>
           </div>
+         
           <div class="right-box">
+
+             
+            
             <div class="nav-list">
+              <!-- <el-autocomplete
+                  v-model="input"
+                  :fetch-suggestions="querySearchAsync"
+                  placeholder="请输入商品信息"
+                  @select="handleSelect"
+                ></el-autocomplete> -->
+                <el-autocomplete
+                placeholder="请输入商品信息"
+                v-model="input"
+                :fetch-suggestions="querySearchAsync"
+                @select="handleIconClick"
+                @on-icon-click.native="handleIconClick"
+                @keydown.enter.native="handleIconClick">
+                 <i
+                    class="el-icon-search"
+                    slot="suffix"
+                    @click="handleIconClick" style="cursor:pointer;padding-top:12px">
+                  </i>
+              </el-autocomplete>
+               <!-- <el-input placeholder="请输入商品信息" v-model="input" clearable>
+                  <el-button slot="append" icon="el-icon-search" ></el-button>
+               </el-input> -->
               <router-link to="/goods">全部商品</router-link>
+              <router-link to="/goods">后台管理</router-link>
             </div>
+
+
             <div class="nav-aside" ref="aside" :class="{fixed: (st && showNav)}">
               <div class="user pr">
                 <router-link to="/user">个人中心</router-link>
@@ -125,7 +154,7 @@
 <script>
   import YButton from '/components/YButton'
   import { mapMutations, mapState } from 'vuex'
-  import { getCartList, cartDel } from '/api/goods'
+  import { getCartList, cartDel, getQuickSearch} from '/api/goods'
   import { loginOut } from '/api/index'
   import { setStore, removeStore } from '/utils/storage'
 
@@ -157,6 +186,7 @@
           link: '/user/coupon'
         }],
         st: false,
+        input: '',
         // 头部购物车显示
         cartShow: false,
         timerCartShow: null // 定时隐藏购物车
@@ -170,9 +200,10 @@
       totalPrice () {
         let totalPrice = 0
         this.cartList.length && this.cartList.forEach(item => {
+          
           totalPrice += (item.quantity * item.productPrice)
         })
-        return totalPrice
+        return totalPrice.toFixed(2)
       },
       // 计算数量
       totalNum () {
@@ -185,6 +216,76 @@
     },
     methods: {
       ...mapMutations(['ADD_CART', 'INIT_BUYCART', 'ADD_ANIMATION', 'SHOW_CART', 'REDUCE_CART', 'RECORD_USERINFO', 'EDIT_CART']),
+      
+      handleIconClick (ev) {
+        if (this.$route.path === '/search') {
+          this.$router.push({
+            path: '/refreshsearch',
+            query: {
+              key: this.input
+            }
+          })
+        } else {
+          this.$router.push({
+            path: '/search',
+            query: {
+              key: this.input
+            }
+          })
+        }
+      },
+      loadAll () {
+        let params = {
+          params: {
+            query: this.input,
+            pageNum:1,
+            pageSize:10
+          }
+        }
+        getQuickSearch(params.params).then(res => {
+          if (res === null || res === '') {
+            return
+          }
+          if (res.error) {
+            this.$message.error(res.msg)
+            return
+          }
+          var array = []
+          var maxSize = 5
+          if (res.data.total <= 5) {
+            maxSize = res.data.total
+          }
+          for (var i = 0; i < maxSize; i++) {
+            var obj = {}
+            obj.value = res.data.list[i].name 
+            array.push(obj)
+          }
+          if (array.length !== 0) {
+            this.searchResults = array
+          } else {
+            this.searchResults = []
+          }
+        })
+      },
+      querySearchAsync (queryString, cb) {
+        if (this.input === undefined) {
+          cb([])
+          return
+        }
+        this.input = this.input.trim()
+        if (this.input === '') {
+          cb([])
+          return
+        } else {
+          this.loadAll()
+          setTimeout(() => {
+            cb(this.searchResults)
+          }, 300)
+        }
+      },
+      handleSelect (item) {
+        this.input = item.value
+      },
       // 购物车显示
       cartShowState (state) {
         this.SHOW_CART({showCart: state})
@@ -351,8 +452,10 @@
         content: " ";
         @include wh(1px, 13px);
         overflow: hidden;
-        position: absolute;
-        top: 4px;
+        // position: absolute;
+        // top: 4px;
+        display: flex;
+        align-items: center;
         left: 0;
       }
       &.fixed {
@@ -387,6 +490,7 @@
     }
     .nav-aside {
       display: flex;
+      align-items: center;
     }
     // 用户
     .user {
