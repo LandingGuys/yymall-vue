@@ -7,6 +7,7 @@ import infiniteScroll from 'vue-infinite-scroll'
 import VueCookie from 'vue-cookie'
 import Element from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import 'lib-flexible/flexible'
 import { userInfo } from './api'
 
 Vue.use(Element)

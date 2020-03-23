@@ -53,11 +53,6 @@
             <a @click="_oauth(weibo)"><img  style="height: 25px; margin-top: 22px; margin-left:20px" src="/static/svg/weibo.svg"></a>
             <a @click="_oauth(github)"><img  style="height: 25px; margin-top: 22px; margin-left:20px" src="/static/svg/github.svg"></a>
           </div>
-          <!-- <el-dialog
-            :visible.sync="dialogVisible"
-            width="50%"
-            :before-close="handleClose">
-          </el-dialog> -->
         </div>
       </div>
     </div>
@@ -176,24 +171,11 @@ export default {
       this.logintxt = '登录中...'
       this.rememberPass()
       if (!this.ruleForm.userName || !this.ruleForm.userPwd) {
-        // this.ruleForm.errMsg = '账号或者密码不能为空!'
         this.message('账号或者密码不能为空!')
         return false
       }
-      // var result = captcha.getValidate()
-      // if (!result) {
-      //   this.message('请完成验证')
-      //   this.logintxt = '登录'
-      //   return false
-      // }
       var params = {
-        // userName: this.ruleForm.userName,
-        // userPwd: this.ruleForm.userPwd,
-        // challenge: result.geetest_challenge,
-        // validate: result.geetest_validate,
-        // seccode: result.geetest_seccode,
-        // statusKey: this.statusKey
-        username: this.ruleForm.userName,
+        usernameOrEmailOrPhone: this.ruleForm.userName,
         password: this.ruleForm.userPwd
       }
       userLogin(params).then(res => {
@@ -227,42 +209,21 @@ export default {
         }
       })
     },
-    // init_geetest () {
-    //   geetest().then(res => {
-    //     this.statusKey = res.statusKey
-    //     window.initGeetest({
-    //       gt: res.gt,
-    //       challenge: res.challenge,
-    //       new_captcha: res.new_captcha,
-    //       offline: !res.success,
-    //       product: 'popup',
-    //       width: '100%'
-    //     }, function (captchaObj) {
-    //       captcha = captchaObj
-    //       captchaObj.appendTo('#captcha')
-    //       captchaObj.onReady(function () {
-    //         document.getElementById('wait').style.display = 'none'
-    //       })
-    //     })
-    //   })
-    // },
     async _oauth(params){
-      // console.log(params)
      const res = await oauth(params)
-    //  console.log(res)
      if(res.status !== 0){
        this.$message.error("第三方登录失败")
      }
     this.url = res.data.url;
-    //window.location.href= this.url
-    window.open(this.url)
+    window.location.href= this.url
+    // window.open(this.url)
     }
   },
   mounted () {
     this.getRemembered()
     this.login_addCart()
-    this.init_geetest()
-    // this.open('登录提示', '测试体验账号密码：test | test')
+    // this.init_geetest()
+    this.open('登录提示', '测试体验账号密码：test | test')
   },
   components: {
     YFooter,

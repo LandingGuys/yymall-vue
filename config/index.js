@@ -29,8 +29,8 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api/': {
-         target: 'http://127.0.0.1:8081/' , // 请求本地 
-        //target: 'http://www.main.wast.club:8081/',   // 请求线上 可直接运行
+        //  target: 'http://127.0.0.1:8081/' , // 请求本地 
+        target: 'http://www.mall.wast.club:8081/',   // 请求线上 可直接运行
          
         changeOrigin: true,
         pathRewrite: {
@@ -38,7 +38,7 @@ module.exports = {
         }
       },
       '/pay/':{
-        target: 'http://www.main.wast.club:8080/',
+        target: 'http://www.mall.wast.club:8080/',
         changeOrigin: true,
         // pathRewrite: {
         //   '^/pay': '/'
@@ -51,5 +51,21 @@ module.exports = {
     // In our experience, they generally work as expected,
     // just be aware of this issue when enabling this option.
     cssSourceMap: false
-  }
+  },
+  css: {
+    loaderOptions: {
+        css: {
+            // options here will be passed to css-loader
+        },
+        "postcss": {
+            "plugins": {
+                "autoprefixer": {},
+                "postcss-pxtorem": {
+                    "rootValue": 75,   
+                    "propList":["*"]   
+                }
+            }
+        }
+    }
+}
 }

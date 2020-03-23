@@ -9,9 +9,11 @@
               <li class="username border-1p">
                 <div style="margin-top: 40px;" class="input">
                   <input type="text" class="m-input"
-                         v-model="registered.userName" placeholder="昵称"
-                        >
+                         v-model="registered.userName" placeholder="昵称/用户名 3~10个字符"
+                        @blur="_checkName" minlength="3" maxlength="10">
+                 
                 </div>
+                 <div v-if="error" class="invalid-feedback" >{{errors.userName}}</div>
               </li>
               <li>
                 <div class="input">
@@ -49,7 +51,7 @@
               <li>
                 <div class="input">
                       <InputGroup class="m-input"
-                          type="number"
+                          type="text"
                           v-model="registered.verifyCode"
                           placeholder="验证码"
                           :error="errors.code"
@@ -98,7 +100,7 @@
 import YFooter from '/common/footer'
 import YButton from '/components/YButton'
 import InputGroup from '/components/inputGroup'
-import { register, email } from '/api/index.js'
+import { register, email, checkName } from '/api/index.js'
 // require('../../../static/geetest/gt.js')
 var captcha
 export default {
@@ -106,6 +108,7 @@ export default {
     return {
       // phoneOrEmail:"", //手机号or邮箱
       // verifyCode:"", //验证码
+      error:String,
       btnTitle:"获取验证码",
       disabled:false,  //是否可点击
       errors:{}, //验证提示信息
@@ -159,15 +162,17 @@ export default {
     },
     regist () {
       this.registxt = '注册中...'
-      let userName = this.registered.userName
-      let userPwd = this.registered.userPwd
+      let username = this.registered.userName
+      let password = this.registered.userPwd
       let userPwd2 = this.registered.userPwd2
-      if (!userName || !userPwd || !userPwd2) {
+      let phoneOrEmail = this.registered.phoneOrEmail
+      let verifyCode = this.registered.verifyCode
+      if (!username || !password || !userPwd2) {
         this.message('账号密码不能为空!')
         this.registxt = '注册'
         return false
       }
-      if (userPwd2 !== userPwd) {
+      if (userPwd2 !== password) {
         this.message('两次输入的密码不相同!')
         this.registxt = '注册'
         return false
@@ -177,29 +182,51 @@ export default {
         this.registxt = '注册'
         return false
       }
-      var result = captcha.getValidate()
-      if (!result) {
-        this.message('请完成验证')
-        this.registxt = '注册'
-        return false
-      }
+      // var result = captcha.getValidate()
+      // if (!result) {
+      //   this.message('请完成验证')
+      //   this.registxt = '注册'
+      //   return false
+      // }
       register({
-        userName,
-        userPwd,
-        challenge: result.geetest_challenge,
-        validate: result.geetest_validate,
-        seccode: result.geetest_seccode,
-        statusKey: this.statusKey }).then(res => {
-          if (res.success === true) {
+        username,
+        password,
+        phoneOrEmail,
+        verifyCode
+        }).then(res => {
+          if (res.status === 0) {
             this.messageSuccess()
             this.toLogin()
           } else {
-            this.message(res.message)
-            captcha.reset()
+            this.message(res.msg)
             this.registxt = '注册'
             return false
           }
         })
+    },
+    async _checkName(){
+    if(!this.registered.userName){
+      this.errors = {
+        userName:"昵称/用户名不能为空"
+      } 
+      
+    } else {
+        let params ={
+          userName: this.registered.userName
+        }
+        const res = await checkName(params)
+        if(res.status !== 0){
+          this.errors = {
+            userName: res.msg
+          } 
+        }else{
+          this.errors ={}
+          return true
+        }
+        
+      }
+      
+     
     },
     async getVerifyCode(){
       // console.log(this.registered.phoneOrEmail)
@@ -228,11 +255,7 @@ export default {
           }
         }
       }
-      // if(this.validatePhone()){
-      //   console.log("111")
-      //     this.validateBtn()
-      //     //发送网络请求
-      // }
+      
     },
     validatePhone(){
       //判断输入的手机号是否合法
@@ -327,6 +350,7 @@ export default {
       border: 1px solid #ccc;
       border-radius: 6px;
     }
+    
     // .el-input {
     //   font-size: 16px;
     //   width: 100%;
@@ -334,6 +358,10 @@ export default {
     //   border-radius: 6px;
     // }
   }
+  .invalid-feedback{
+        color:red;
+        font-size: 8px;
+    }
   .wrapper {
     background: url(/static/images/bg_9b9dcb65ff.png) repeat;
     background-size: 100px;

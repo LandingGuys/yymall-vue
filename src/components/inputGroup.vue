@@ -7,6 +7,7 @@
                 :value="value"
                 :name="name"
                 @input="$emit('input',$event.target.value)"
+                
             >
             <!-- 输入框后面的内容 -->
             <el-button class="btn" type="text" v-if="btnTitle" @click="$emit('btnClick')" :disabled="disabled">{{btnTitle}}</el-button>

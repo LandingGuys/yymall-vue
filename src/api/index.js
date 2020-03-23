@@ -12,13 +12,21 @@ export const loginOut = (params) => {
 export const userInfo = (params) => {
   return http.fetchGet(`${baseUrl}/user`, params)
 }
+// 用户名验证
+export const checkName = (params) => {
+  return http.fetchGet(`${baseUrl}/user/checkName`, params)
+}
 // 注册账号
 export const register = (params) => {
   return http.fetchPost(`${baseUrl}/user/register`, params)
 }
-// 注册账号
+// 获取邮箱验证码
 export const email = (params) => {
   return http.fetchGet(`${baseUrl}/user/email`, params)
+}
+// 获取手机验证码
+export const phone = (params) => {
+  return http.fetchGet(`${baseUrl}/user/phone`, params)
 }
 // 上传图片
 export const upload = (params) => {

@@ -18,10 +18,17 @@ exports.cssLoaders = function (options) {
       minimize: process.env.NODE_ENV === 'production',
       sourceMap: options.sourceMap
     }
+    
   }
-
+  // const px2remLoader = {
+  //   loader: 'px2rem-loader',
+  //   options: {
+  //     remUnit: 50
+  //   }
+  // }
   // generate loader string to be used with extract text plugin
   function generateLoaders (loader, loaderOptions) {
+    // const loaders = options.usePostCSS ? [cssLoader, postcssLoader, px2remLoader] : [cssLoader, px2remLoader]
     var loaders = [cssLoader]
     if (loader) {
       loaders.push({
@@ -70,3 +77,5 @@ exports.styleLoaders = function (options) {
   }
   return output
 }
+
+
