@@ -24,6 +24,7 @@ const Alipay = () => import('/page/Order/alipay.vue')
 const Wechat = () => import('/page/Order/wechat.vue')
 const Search = () => import('/page/Search/search.vue')
 const RefreshSearch = () => import('/page/Refresh/refreshsearch.vue')
+const RefreshGoods = () => import('/page/Refresh/refreshgoods.vue')
 
 Vue.use(Router)
 export default new Router({
@@ -37,7 +38,8 @@ export default new Router({
       children: [
         {path: 'home', component: Home},
         {path: 'goods', component: GoodS},
-        {path: 'goodsDetails', name: 'goodsDetails', component: goodsDetails}
+        {path: 'goodsDetails', name: 'goodsDetails', component: goodsDetails},
+        {path: '/refreshgoods', name: 'refreshgoods', component: RefreshGoods}
       ]
     },
     {path: '/login', name: 'login', component: Login},

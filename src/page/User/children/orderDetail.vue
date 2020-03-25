@@ -154,10 +154,12 @@
         })
       },
       orderPayment (orderId) {
-        window.open(window.location.origin + '/order/payment?orderId=' + orderId)
+        //window.open(window.location.origin + '/order/payment?orderId=' + orderId)
+        window.location.href = window.location.origin + '/#/order/payment?orderId=' + orderId
       },
       goodsDetails (id) {
-        window.open(window.location.origin + '/goodsDetails?productId=' + id)
+         window.location.href = window.location.origin + '/#/goodsDetails?productId=' + id
+       // window.open(window.location.origin + '/goodsDetails?productId=' + id)
       },
       async _getOrderDet () {
         let params = {

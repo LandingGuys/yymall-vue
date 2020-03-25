@@ -150,7 +150,8 @@
         this.checkValid()
       },
       goodsDetails (id) {
-        window.open(window.location.origin + '/#/goodsDetails?productId=' + id,'_self')
+         window.location.href = window.location.origin + '/#/goodsDetails?productId=' + id
+        //window.open(window.location.origin + '/#/goodsDetails?productId=' + id,'_self')
       },
       async _getOrderDet (orderId) {
          let params = {

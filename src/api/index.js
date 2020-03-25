@@ -40,6 +40,7 @@ export const updateheadimage = (params) => {
 export const productHome = (params) => {
   return http.fetchGet(`${baseUrl}/products`, params)
 }
+// 推薦
 export const recommend = (params) => {
   return http.fetchGet('/products/recommend', params)
 }
@@ -47,8 +48,23 @@ export const recommend = (params) => {
 export const oauth = (params) => {
   return http.fetchPost(`${baseUrl}/oauth/` + params, params)
 }
-
-// 极验验证码
-// export const geetest = (params) => {
-//   return http.fetchGet('/user/geetestInit?t=' + (new Date()).getTime(), params)
-// }
+//
+export const navList = (params) => {
+  return http.fetchGet(`${baseUrl}/categories`, params)
+}
+// 修改用户名
+export const updateUser = (params) => {
+  return http.fetchPut(`${baseUrl}/user`, params)
+}
+// 发送邮箱验证码
+export const sendEmailCode = (params) => {
+  return http.fetchGet(`${baseUrl}/user/sendEmail`, params)
+}
+// 邮箱验证
+export const checkEmail = (params) => {
+  return http.fetchGet(`${baseUrl}/user/checkEmail`, params)
+}
+// 手机验证
+export const checkPhone = (params) => {
+  return http.fetchGet(`${baseUrl}/user/checkPhone`, params)
+}

@@ -37,13 +37,13 @@
           <img src="/static/images/no-search.png">
           <br> 抱歉！暂时还没有商品
         </div>
-        <section class="section">
+        <!-- <section class="section">
           <y-shelf :title="recommendPanel.name">
             <div slot="content" class="recommend">
               <mall-goods :msg="item" v-for="(item,i) in recommendPanel.panelContents" :key="i"></mall-goods>
             </div>
           </y-shelf>
-        </section>
+        </section> -->
       </div>
       <div class="no-info" v-if="error">
         <div class="no-data">
@@ -117,14 +117,10 @@
           // }
           pageNum: this.currentPage,
           pageSize: this.pageSize,
-          // sort: this.sort,
-          // priceGt: this.min,
-          // priceLte: this.max,
-          categoryId: cid
+          categoryId: cid,
+          
         }
-        // console.log(params)
         const res = await getAllGoods(params)
-        // console.log(res)
         if(res.status === 0){
           this.total = res.data.total
           this.goods = res.data.list

@@ -14,12 +14,6 @@
              
             
             <div class="nav-list">
-              <!-- <el-autocomplete
-                  v-model="input"
-                  :fetch-suggestions="querySearchAsync"
-                  placeholder="请输入商品信息"
-                  @select="handleSelect"
-                ></el-autocomplete> -->
                 <el-autocomplete
                 placeholder="请输入商品信息"
                 v-model="input"
@@ -33,14 +27,9 @@
                     @click="handleIconClick" style="cursor:pointer;padding-top:12px">
                   </i>
               </el-autocomplete>
-               <!-- <el-input placeholder="请输入商品信息" v-model="input" clearable>
-                  <el-button slot="append" icon="el-icon-search" ></el-button>
-               </el-input> -->
               <router-link to="/goods">全部商品</router-link>
               <router-link to="/goods">后台管理</router-link>
             </div>
-
-
             <div class="nav-aside" ref="aside" :class="{fixed: (st && showNav)}">
               <div class="user pr">
                 <router-link to="/user">个人中心</router-link>
@@ -136,12 +125,15 @@
           <div class="nav-sub-bg"></div>
           <div class="nav-sub-wrapper" :class="{fixed:st}">
             <div class="w">
-              <ul class="nav-list">
+              <ul class="nav-list2">
                 <li>
-                  <router-link to="/">首页</router-link>
+                  <router-link to="/"><a @click="changGoods(-1)" :class="{active:choosePage===-1}">首页</a></router-link>
                 </li>
                 <li>
-                  <router-link to="/goods">全部商品</router-link>
+                  <a @click="changGoods(-2)" :class="{active:choosePage===-2}">全部</a>
+                </li>
+                <li v-for="(item,i) in navListP" :key="i">
+                  <a @click="changGoods(i, item)" :class="{active:i===choosePage}">{{item.name}}</a>
                 </li>
               </ul>
             </div>
@@ -155,7 +147,7 @@
   import YButton from '/components/YButton'
   import { mapMutations, mapState } from 'vuex'
   import { getCartList, cartDel, getQuickSearch} from '/api/goods'
-  import { loginOut } from '/api/index'
+  import { loginOut, navList } from '/api/index'
   import { setStore, removeStore } from '/utils/storage'
 
   export default {
@@ -188,8 +180,11 @@
         st: false,
         input: '',
         // 头部购物车显示
+        choosePage: -1,
         cartShow: false,
-        timerCartShow: null // 定时隐藏购物车
+        timerCartShow: null,// 定时隐藏购物车
+        navListP: [] 
+
       }
     },
     computed: {
@@ -216,7 +211,25 @@
     },
     methods: {
       ...mapMutations(['ADD_CART', 'INIT_BUYCART', 'ADD_ANIMATION', 'SHOW_CART', 'REDUCE_CART', 'RECORD_USERINFO', 'EDIT_CART']),
-      
+      // 导航栏文字样式改变
+      changePage (v) {
+        this.choosePage = v
+      },
+      changGoods (v, item) {
+        this.changePage(v)
+        if (v === -1) {
+          this.$router.push({
+            path: '/'
+          })
+        } else if (v === -2) {
+          this.$router.push({
+            path: '/refreshgoods'
+          })
+        } else {
+          //站內跳轉
+          window.location.href = window.location.origin + '/#/goods?cid='+item.id
+        }
+      },
       handleIconClick (ev) {
         if (this.$route.path === '/search') {
           this.$router.push({
@@ -296,7 +309,6 @@
           if (res.status === 0) {
             setStore('buyCart', res.data.cartProductVoList)
           } else {
-             console.log(res)
               // this.$message.error(res.msg)
               setStore('buyCart', [])
           }
@@ -344,13 +356,23 @@
       // 退出登陆
       _loginOut () {
         loginOut().then(res => {
-          removeStore('buyCart')
-          removeStore('token')
+           removeStore('token')
+           removeStore('userId')
+           removeStore('userInfo')
+           removeStore('buyCart')
           window.location.href = '/'
         })
+      },
+      async _getNavList () {
+        const res = await navList();
+        if(res.status !==0){
+          this.$message.error(res.msg)
+        }
+        this.navListP = res.data
       }
     },
     mounted () {
+      this._getNavList()
       if (this.login) {
         this._getCartList()
       } else {
@@ -398,8 +420,8 @@
 
   .header-box {
     background: $head-bgc;
-    background-image: -webkit-linear-gradient(#000, #121212);
-    background-image: linear-gradient(#000, #121212);
+    background-image: -webkit-linear-gradient(#F0F8FF, #ADD8E6);
+    background-image: linear-gradient(#F0F8FF,  #ADD8E6);
     width: 100%;
 
   }
@@ -918,7 +940,7 @@
       display: flex;
       justify-content: space-between;
     }
-    .nav-list {
+    .nav-list2 {
       line-height: 28px;
       display: flex;
       align-items: center;
@@ -937,6 +959,9 @@
           display: block;
           padding: 0 20px;
           color: #666;
+          &.active {
+            font-weight: bold;
+          }
         }
       }
       li:before {

@@ -5,9 +5,13 @@
            @mouseover="bgOver($refs.bg)"
            @mousemove="bgMove($refs.bg,$event)"
            @mouseout="bgOut($refs.bg)">
-        <span class="img a"></span>
-        <span class="text b">以傲慢与偏执<br/>回敬傲慢与偏见</span>
-        <span class="copyright c">code by qingjin.me | picture from t.tt</span>
+
+           <el-carousel indicator-position="outside" :interval="3000" height="500px">
+              <el-carousel-item v-for="item in imageBar" :key="item">
+                <img :src="item" style="width: 100%;height: 100%;object-fit:cover;">
+              </el-carousel-item>
+          </el-carousel>
+         
       </div>
     </div>
 
@@ -39,7 +43,17 @@
   export default {
     data () {
       return {
-        banner: {},
+        banner: {
+
+        },
+        imageBar:[
+          "https://shuixin.oss-cn-beijing.aliyuncs.com/%E6%99%BA%E6%85%A7%E8%8D%AF%E6%88%BF/03c69b593810c2c0.jpg_q90.jpg",
+          "https://shuixin.oss-cn-beijing.aliyuncs.com/%E6%99%BA%E6%85%A7%E8%8D%AF%E6%88%BF/5b6013a81f41f2c4.jpg",
+          "https://shuixin.oss-cn-beijing.aliyuncs.com/%E6%99%BA%E6%85%A7%E8%8D%AF%E6%88%BF/6963663800437e07.png",
+          "https://shuixin.oss-cn-beijing.aliyuncs.com/%E6%99%BA%E6%85%A7%E8%8D%AF%E6%88%BF/a33ac03e8946aab5.jpg",
+          "https://shuixin.oss-cn-beijing.aliyuncs.com/%E6%99%BA%E6%85%A7%E8%8D%AF%E6%88%BF/faffca8907261b90.jpg"
+
+        ],
         bgOpt: {
           offsetLeft: 0,
           offsetTop: 0,
@@ -105,6 +119,21 @@
   }
 </script>
 <style lang="scss" rel="stylesheet/scss" scoped>
+.el-carousel__item h3 {
+    color: #475669;
+    font-size: 18px;
+    opacity: 0.75;
+    line-height: 300px;
+    margin: 0;
+  }
+  
+  .el-carousel__item:nth-child(2n) {
+    background-color: #99a9bf;
+  }
+  
+  .el-carousel__item:nth-child(2n+1) {
+    background-color: #d3dce6;
+  }
   .banner, .banner span, .banner div {
     font-family: "Microsoft YaHei";
     transition: all .3s;
@@ -124,7 +153,7 @@
     width: 1220px;
     height: 500px;
     margin: 20px auto;
-    background: url("/static/images/banner-3d-item.png") center no-repeat;
+    // background: url("/static/images/banner-3d.jpg") center no-repeat;
     background-size: 100% 100%;
     border-radius: 10px;
     transform-style: preserve-3d;
@@ -139,7 +168,7 @@
     height: 100%;
     bottom: 5px;
     left: 0;
-    background: url("/static/images/banner-3d.png") center no-repeat;
+    // background: url("/static/images/banner-3d.jpg") center no-repeat;
     background-size: 95% 100%;
   }
 

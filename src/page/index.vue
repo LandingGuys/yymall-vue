@@ -10,7 +10,7 @@
            :style="{left:(cartPositionL-10) + 'px',top:(cartPositionT-10) + 'px'}">
         <div><img :src="moveImgUrl"></div>
       </div>
-    </transition>
+    </transition> 
   </div>
 </template>
 <script>

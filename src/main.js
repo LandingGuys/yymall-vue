@@ -36,6 +36,7 @@ router.beforeEach(function (to, from, next) {
         next('/login')
       }
     } else {
+      console.log(res.data)
       store.commit('RECORD_USERINFO', {info: res.data})
       //  跳转到
       if (to.path === '/login') {
