@@ -36,9 +36,9 @@ export const upload = (params) => {
 export const updateheadimage = (params) => {
   return http.fetchPut(`${baseUrl}/user`, params)
 }
-// 首页接口
-export const productHome = (params) => {
-  return http.fetchGet(`${baseUrl}/products`, params)
+// 热品或新品接口
+export const productHotOrNew = (params) => {
+  return http.fetchGet(`${baseUrl}/products/type`, params)
 }
 // 推薦
 export const recommend = (params) => {

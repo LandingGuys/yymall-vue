@@ -39,7 +39,7 @@ export default new Router({
         {path: 'home', component: Home},
         {path: 'goods', component: GoodS},
         {path: 'goodsDetails', name: 'goodsDetails', component: goodsDetails},
-        {path: '/refreshgoods', name: 'refreshgoods', component: RefreshGoods}
+        {path: 'refreshgoods', name: 'refreshgoods', component: RefreshGoods}
       ]
     },
     {path: '/login', name: 'login', component: Login},

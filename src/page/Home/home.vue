@@ -23,7 +23,21 @@
         </div>
       </y-shelf>
     </section>
-    <section class="w mt30 clearfix" v-for="(item,i) in floors" :key="i">
+     <section class="w mt30 clearfix">
+      <y-shelf title="最新上架">
+        <!-- <div slot="content" class="hot">
+          <mall-goods :msg="item" v-for="(item,i) in newProduct" :key="i"></mall-goods>
+        </div> -->
+        <div slot="content" class="floors">
+          <!-- <div class="imgbanner">
+            <img v-lazy="floors[i].image.image" :alt="item.title">
+          </div> -->
+          <mall-goods :msg="tab" v-for="(tab,i) in newProduct" :key="i"></mall-goods>
+        </div>
+      </y-shelf>
+    </section>
+    
+    <!-- <section class="w mt30 clearfix" v-for="(item,i) in floors" :key="i">
       <y-shelf :title="item.title">
         <div slot="content" class="floors">
           <div class="imgbanner">
@@ -32,11 +46,11 @@
           <mall-goods :msg="tab" v-for="(tab,i) in item.tabs" :key="i"></mall-goods>
         </div>
       </y-shelf>
-    </section>
+    </section> -->
   </div>
 </template>
 <script>
-  import { productHome } from '/api'
+  import { productHotOrNew } from '/api'
   import YShelf from '/components/shelf'
   import product from '/components/product'
   import mallGoods from '/components/mallGoods'
@@ -61,7 +75,8 @@
           offsetHeight: 0
         },
         floors: [],
-        hot: []
+        hot: [],
+        newProduct: []
       }
     },
     methods: {
@@ -97,19 +112,33 @@
       bgOut (dom) {
         dom.style.transform = 'rotateY(0deg) rotateX(0deg)'
         dom.style['-webkit-transform'] = 'rotateY(0deg) rotateX(0deg)'
-      }
-    },
-    mounted () {
-      productHome().then(res => {
-        // console.log(res)
+      },
+      getProductHotOrNew(type){
+          let params ={
+            type: type
+        }
+      productHotOrNew(params).then(res => {
+         console.log(res)
         if (res.status !== 0) {
             this.$message.error(res.msg)
         } 
-         this.hot = res.data.list;
+        if(type === 'hot'){
+           this.hot = res.data.list;
+        }else if(type === 'new'){
+          this.newProduct = res.data.list;
+        }else{
+
+        }
+        
         // const { home_floors, home_hot } = res.data.list
         // this.floors = home_floors
         // this.hot = home_hot
       })
+      }
+    },
+    mounted () {
+      this.getProductHotOrNew('hot')
+      this.getProductHotOrNew('new')
     },
     components: {
       YShelf,

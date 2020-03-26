@@ -56,12 +56,7 @@
       <y-shelf title="产品信息">
         <div slot="content">
           <div class="img-item" v-if="productMsg">
-            <!-- <img v-for="(item, i) in productMsg.pieces_num"
-                 v-lazy="`${productMsg.url}?x-oss-process=image/resize,w_2440/indexcrop,y_1440,i_${item-1}/quality,Q_100/format,webp`"
-                 alt="产品信息"
-                 :key="i"
-                > -->
-                <div v-html="productMsg">{{ productMsg }}</div>
+                <div class="detail" v-html="productMsg"></div>
           </div>
           <div class="no-info" v-else>
               <img src="/static/images/no-data.png">
@@ -286,5 +281,8 @@
       padding-left: 2px;
       font-size: 24px;
     }
+  }
+  .detail /deep/  img{
+      width: 100%        
   }
 </style>
