@@ -216,6 +216,7 @@ export default {
      }
     this.url = res.data.url;
     window.location.href= this.url
+    // window.open(this.url,'','width=800,height=1000,left=300');
     // window.open(this.url)
     }
   },
