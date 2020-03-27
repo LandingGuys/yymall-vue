@@ -29,7 +29,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api/': {
-         target: 'http://127.0.0.1:8081/' , // 请求本地 
+        target: 'http://127.0.0.1:8081/' , // 请求本地 
         //target: 'http://www.mall.wast.club:8081/',   // 请求线上 可直接运行
          
         changeOrigin: true,

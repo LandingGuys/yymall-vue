@@ -28,7 +28,7 @@
                   </i>
               </el-autocomplete>
               <router-link to="/goods">全部商品</router-link>
-              <router-link to="/goods">后台管理</router-link>
+              <a @click="changGoods(-3)" :class="{active:choosePage===-3}">后台管理</a>
             </div>
             <div class="nav-aside" ref="aside" :class="{fixed: (st && showNav)}">
               <div class="user pr">
@@ -225,11 +225,16 @@
           this.$router.push({
             path: '/refreshgoods'
           })
-        } else {
+        } else if(v === -3) {
+          //站外跳转 后台管理
+          window.open("http://admall.wast.club")
+        }
+        else {
           //站內跳轉
           window.location.href = window.location.origin + '/#/goods?cid='+item.id
         }
       },
+      
       handleIconClick (ev) {
         if (this.$route.path === '/search') {
           this.$router.push({

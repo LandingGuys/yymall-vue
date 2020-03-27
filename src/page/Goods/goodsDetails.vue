@@ -56,7 +56,12 @@
       <y-shelf title="产品信息">
         <div slot="content">
           <div class="img-item" v-if="productMsg">
-                <div class="detail" v-html="productMsg"></div>
+                
+                     <div class="detail" v-html="productMsg">
+
+                     </div>
+                
+               
           </div>
           <div class="no-info" v-else>
               <img src="/static/images/no-data.png">
@@ -99,7 +104,7 @@
           this.product = result
           this.productMsg = result.detail || ''
           this.big = result.mainImage
-          //this.small = result.subImages
+          this.small = result.subImages.split(';')
         }
       },
       addCart (id, price, name, img) {
@@ -282,7 +287,7 @@
       font-size: 24px;
     }
   }
-  .detail /deep/  img{
-      width: 100%        
+  .detail /deep/  p{
+      text-align:center;       
   }
 </style>
