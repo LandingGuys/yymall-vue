@@ -78,7 +78,7 @@
           <!--商品-->
           <div class="goods-table">
             <div class="cart-items" v-for="(item,i) in orderList" :key="i">
-              <a @click="goodsDetails(item.productId)" class="img-box"><img :src="item.productImg" alt=""></a>
+              <a @click="goodsDetails(item.productId)" class="img-box"><img :src="item.productImage" alt=""></a>
               <div class="name-cell ellipsis">
                 <a @click="goodsDetails(item.productId)" title="" target="_blank">{{item.productName}}</a>
               </div>
@@ -125,7 +125,8 @@
   import { getOrderDet, cancelOrder } from '/api/goods'
   import YShelf from '/components/shelf'
   import { getStore } from '/utils/storage'
-  import countDown from '/components/countDown'
+  // import countDown from '/components/countDown'
+  const countDown = () => import ('/components/countDown')
   import moment from 'moment'
   export default {
     data () {
@@ -144,7 +145,9 @@
         finishTime: '',
         orderTotal:'',
         loading: true,
-        countTime: 0
+        countTime:'',
+       
+       
       }
     },
     methods: {
@@ -183,18 +186,26 @@
           } else if(res.data.status === 60){
               this.orderStatus = 6
           }
+         
           this.orderList = res.data.orderItemVoList
+          console.log(this.orderList)
           this.orderTotal = await res.data.payment
           this.userName = res.data.receiverName
           this.tel = res.data.receiverPhone
           this.streetName = res.data.receiverAddress
           this.createTime = res.data.createTime
+         
           this.closeTime = res.data.closeTime
           this.payTime = res.data.paymentTime
            if (this.orderStatus === 5) {
             this.finishTime = res.data.endTime
           } else {
-            this.countTime = res.data.endTime
+            
+            let sdate=new Date(res.data.createTime)
+            sdate.setMinutes(sdate.getMinutes()+30);
+            var ss = sdate.getTime();
+            this.countTime = (new Date(ss).toLocaleString('chinese',{hour12:false})).replace(/\//g,'-')
+          
           }
           this.loading = false
         } else {

@@ -3,6 +3,7 @@
     <slot>
       {{content}}
     </slot>
+    
   </span>
 </template>
 <script>
@@ -27,12 +28,15 @@ export default {
     }
   },
   methods: {
-    countdowm (timestamp) {
-      let self = this
+    countdowm (timestamp) {  
+      
+      let self = this 
+      var new_time_str = timestamp.replace(/-/g, '/')
+      let end_Time =  Date.parse(new Date(new_time_str))
       let timer = setInterval(function () {
-        let nowTime = new Date()
-        let t = timestamp - nowTime.getTime()
-        if (t > 0) {
+        let nowTime = Date.parse(new Date())
+        if (end_Time > nowTime) {
+          let t = end_Time - nowTime
           let day = Math.floor(t / 86400000)
           let hour = Math.floor((t / 3600000) % 24)
           let min = Math.floor((t / 60000) % 60)
@@ -64,7 +68,7 @@ export default {
       }
     }
   },
-  mounted () {
+  created () {
     this.countdowm(this.endTime)
   }
 }
