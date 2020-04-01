@@ -45,20 +45,44 @@
       goodsDetails (id) {
         this.$router.push({path: 'goodsDetails/productId=' + id})
       },
-      async addCart (id, price, name, img) {
-
-        if (!this.showMoveImg) {     // 动画是否在运动
+       addCart (id, price, name, img) {
+        // if (!this.showMoveImg) {     // 动画是否在运动
+        //   if (this.login) { // 登录了 直接存在用户名下
+        //    const res = await addCart({productId: id})
+        //     if(res.status !== 0){
+        //       this.$message.error(res.msg)
+        //     } 
+        //     this.ADD_CART({productId: id, productPrice: price, productName: name, productMainImage: img}) 
+        //   } else { // 未登录 vuex
+        //      this.ADD_CART({productId: id, productPrice: price, productName: name, productMainImage: img}) 
+        //   }
+        //   // 加入购物车动画
+        //   let dom = event.target
+        //   // 获取点击的坐标
+        //   let elLeft = dom.getBoundingClientRect().left + (dom.offsetWidth / 2)
+        //   let elTop = dom.getBoundingClientRect().top + (dom.offsetHeight / 2)
+        //   // 需要触发
+        //   this.ADD_ANIMATION({moveShow: true, elLeft: elLeft, elTop: elTop, img: img})
+        //   if (!this.showCart) {
+        //     this.SHOW_CART({showCart: true})
+        //   }
+        // }
+         if (!this.showMoveImg) {     // 动画是否在运动
           if (this.login) { // 登录了 直接存在用户名下
-            addCart({productId: id}).then(res => {
-                 this.ADD_CART({productId: id, productPrice: price, productName: name, productMainImage: img})
-            }).catch(res =>{
+           //const res =  addCart({productId: id})
+           addCart({productId: id}).then(res => {
+              if(res.status !== 0){
                 this.$message.error(res.msg)
-            }) 
+              } 
+              this.ADD_CART({productId: id, productPrice: price, productName: name, productMainImage: img}) 
+            })
+           
+            
           } else { // 未登录 vuex
-            this.ADD_CART({productId: id, productPrice: price, productName: name, productMainImage: img})
+            this.ADD_CART({productId: id, productPrice: price, productName: name, productMainImage: img}) 
           }
           // 加入购物车动画
-          let dom = event.target
+          var dom = event.target
           // 获取点击的坐标
           let elLeft = dom.getBoundingClientRect().left + (dom.offsetWidth / 2)
           let elTop = dom.getBoundingClientRect().top + (dom.offsetHeight / 2)
@@ -68,6 +92,9 @@
             this.SHOW_CART({showCart: true})
           }
         }
+        
+        
+       
       }
     },
     computed: {

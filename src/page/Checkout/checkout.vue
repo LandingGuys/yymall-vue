@@ -147,6 +147,7 @@
       return {
         cartList: [],
         addList: [],
+        productList:[],
         addressId: '0',
         popupOpen: false,
         popupTitle: '管理收货地址',
@@ -165,7 +166,8 @@
         userId: '',
         orderTotal: 0,
         submit: false,
-        submitOrder: '提交订单'
+        submitOrder: '提交订单',
+        type: 0
       }
     },
     computed: {
@@ -250,20 +252,33 @@
           return
         }
         for (var i = 0; i < this.cartList.length; i++) {
-          // console.log(this.cartList[i])
-          if (this.cartList[i].productSelected === true && this.cartList[i].id) {
-             const res = await addCart({productId: this.cartList[i].id, productNum: this.cartList[i].quantity, selected: this.cartList[i].productSelected})
-            // array.push(this.cartList[i])
-            if(res.status !== 0){
-              this.message(res.msg)
-            }
+          if (this.cartList[i].productSelected === true) {
+            array.push(this.cartList[i])
           }
-        } 
-        submitOrder({receiverName:this.userName,receiverPhone:this.tel,receiverAddress:this.streetName}).then(res => {
+        }
+        // for (var i = 0; i < this.cartList.length; i++) {
+        //   // console.log(this.cartList[i])
+        //   if (this.cartList[i].productSelected === true && this.cartList[i].id) {
+        //      const res = await addCart({productId: this.cartList[i].id, productNum: this.cartList[i].quantity, selected: this.cartList[i].productSelected})
+        //     // array.push(this.cartList[i])
+        //     if(res.status !== 0){
+        //       this.message(res.msg)
+        //     }
+        //   }
+        // } 
+        let params = {
+          type: this.type,
+          receiverPhone: this.tel,
+          receiverName: this.userName,
+          receiverAddress: this.streetName,
+          orderProductList: array,
+        }
+        // console.log(params)
+        submitOrder(params).then(res => {
           if (res.status === 0) {
             this.payment(res.data.orderNo)
           } else {
-            this.message(res.message)
+            this.message(res.msg)
             this.submitOrder = '提交订单'
             this.submit = false
           }
@@ -340,9 +355,10 @@
     created () {
       this.userId = getStore('userId')
       let query = this.$route.query
-      if (query.productId && query.num) {
+      if (query.productId && query.num ) {
         this.productId = query.productId
         this.num = query.num
+        this.type = 1
         this._productDet(this.productId)
       } else {
         this._getCartList()

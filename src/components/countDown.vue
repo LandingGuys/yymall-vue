@@ -27,9 +27,13 @@ export default {
       default: null
     }
   },
+  watch: {
+      endTime: function(newVal,oldVal){   
+          this.countdowm(newVal);//newVal即是chartData
+      }
+  },
   methods: {
     countdowm (timestamp) {  
-      
       let self = this 
       var new_time_str = timestamp.replace(/-/g, '/')
       let end_Time =  Date.parse(new Date(new_time_str))
@@ -68,7 +72,7 @@ export default {
       }
     }
   },
-  created () {
+  mounted () {
     this.countdowm(this.endTime)
   }
 }

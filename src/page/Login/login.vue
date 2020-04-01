@@ -216,9 +216,16 @@ export default {
      }
     this.url = res.data.url;
     window.location.href= this.url
-    // window.open(this.url,'','width=800,height=1000,left=300');
-    // window.open(this.url)
-    }
+    //this.openWindow(this.url)
+    },
+    //  openWindow(url, width, height)
+    // {
+    //     width = width || 600;
+    //     height = height || 400;
+    //     var left = (window.screen.width - width) / 2;
+    //     var top = (window.screen.height - height) / 2;
+    //     window.open(url, "_blank", "toolbar=yes, location=yes, directories=no, status=no, menubar=yes, scrollbars=yes, resizable=no, copyhistory=yes, left="+left+", top="+top+", width="+width+", height="+height);
+    // }
   },
   mounted () {
     this.getRemembered()

@@ -125,8 +125,8 @@
   import { getOrderDet, cancelOrder } from '/api/goods'
   import YShelf from '/components/shelf'
   import { getStore } from '/utils/storage'
-  // import countDown from '/components/countDown'
-  const countDown = () => import ('/components/countDown')
+  import countDown from '/components/countDown'
+  // const countDown = () => import ('/components/countDown')
   import moment from 'moment'
   export default {
     data () {
@@ -225,10 +225,12 @@
       }
     },
     created () {
+      
       this.userId = getStore('userId')
       this.orderId = this.$route.query.orderId
       this.orderTitle = '订单号：' + this.orderId
       this._getOrderDet()
+      
     },
     components: {
       YShelf,
