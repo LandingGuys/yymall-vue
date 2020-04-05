@@ -151,14 +151,15 @@
       _delOrder (orderId, i) {
         let params = {
           params: {
-            orderId: orderId
+            orderNo: orderId
           }
         }
-        delOrder(params).then(res => {
-          if (res.success === true) {
+        delOrder(params.params).then(res => {
+          if (res.status === 0) {
+            this.$message.success('删除成功')
             this.orderList.splice(i, 1)
           } else {
-            this.message('删除失败')
+            this.message(res.msg)
           }
         })
       }

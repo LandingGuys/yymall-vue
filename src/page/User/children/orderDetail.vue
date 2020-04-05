@@ -188,7 +188,7 @@
           }
          
           this.orderList = res.data.orderItemVoList
-          console.log(this.orderList)
+          //console.log(this.orderList)
           this.orderTotal = await res.data.payment
           this.userName = res.data.receiverName
           this.tel = res.data.receiverPhone

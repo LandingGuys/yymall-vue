@@ -80,7 +80,7 @@ export const cancelOrder = (params) => {
 }
 // 删除订单
 export const delOrder = (params) => {
-  return http.fetchPost(`${baseUrl}/users/delOrder`, params)
+  return http.fetchDelete(`${baseUrl}/user/order/` + params.orderNo, params)
 }
 
 // 快速搜索
