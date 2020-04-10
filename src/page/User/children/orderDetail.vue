@@ -7,13 +7,13 @@
             <el-steps :space="200" :active="orderStatus">
               <el-step title="下单" v-bind:description="createTime | formatDate"></el-step>
               <el-step title="付款" v-bind:description="payTime | formatDate"></el-step>
-              <el-step title="配货" description=""></el-step>
-              <el-step title="出库" description=""></el-step>
-              <el-step title="交易成功" v-bind:description="finishTime"></el-step>
+              <el-step title="出库" v-bind:description="sendTime | formatDate"></el-step>
+               <el-step title="收货" v-bind:description="receiverTime | formatDate"></el-step>
+              <el-step title="交易成功" v-bind:description="endTime | formatDate"></el-step>
             </el-steps>
           </div>
           <div class="orderStatus-close" v-if="orderStatus === -1">
-            <el-steps :space="780" :active="2">
+            <el-steps  :space="780" :active="2">
               <el-step title="下单" v-bind:description="createTime | formatDate"></el-step>
               <el-step title="交易关闭" v-bind:description="closeTime | formatDate"></el-step>
             </el-steps>
@@ -39,11 +39,21 @@
             </p>
           </div>
           <div class="status-now" v-if="orderStatus === 2">
+            
             <ul>
               <li class="status-title"><h3>订单状态：已支付，待发货</h3></li>
             </ul>
             <p class="realtime">
               <span>请耐心等待，即将为您发出货物</span>
+            </p>
+           
+          </div>
+          <div class="status-now" v-if="orderStatus === 3">
+            <ul>
+              <li class="status-title"><h3>订单状态：已发货，待收货</h3></li>
+            </ul>
+             <p class="realtime">
+              <span>请耐心等待，货物正在快马加鞭向你赶来</span>
             </p>
           </div>
           <div class="status-now" v-if="orderStatus === -1 || orderStatus === 6">
@@ -142,7 +152,8 @@
         createTime: '',
         payTime: '',
         closeTime: '',
-        finishTime: '',
+        sendTime: '',
+        endTime: '',
         orderTotal:'',
         loading: true,
         countTime:'',
@@ -177,10 +188,10 @@
               this.orderStatus = 1
           } else if(res.data.status === 20){
               this.orderStatus = 2
-          } else if(res.data.status === 30){
-              this.orderStatus = 5
           } else if(res.data.status === 40){
-              this.orderStatus = -1
+              this.orderStatus = 3
+          } else if(res.data.status === 30){
+              this.orderStatus = 4
           } else if(res.data.status === 50){
               this.orderStatus = 5
           } else if(res.data.status === 60){
@@ -194,13 +205,12 @@
           this.tel = res.data.receiverPhone
           this.streetName = res.data.receiverAddress
           this.createTime = res.data.createTime
-         
-          this.closeTime = res.data.closeTime
           this.payTime = res.data.paymentTime
-           if (this.orderStatus === 5) {
-            this.finishTime = res.data.endTime
+          this.sendTime = res.data.sendTime
+          this.closeTime = res.data.closeTime
+          if (this.orderStatus === 5) {
+            this.endTime = res.data.endTime
           } else {
-            
             let sdate=new Date(res.data.createTime)
             sdate.setMinutes(sdate.getMinutes()+30);
             var ss = sdate.getTime();
@@ -238,6 +248,9 @@
     },
     filters: {
       formatDate: function(val){
+         if(val == null || val == ''){
+              return ''
+          }
         return moment(val).format('YYYY-MM-DD HH:mm:ss')
       }
     }
@@ -247,17 +260,17 @@
   @import "../../../assets/style/mixin";
 
   .orderStatus {
-    display: flex;
+    // display: flex;
     align-items: center;
     flex-direction: row;
-    margin: 50px -150px 20px 60px;
+    margin: 50px -150px 40px 60px;
   }
 
   .orderStatus-close {
-    display: flex;
+    // display: flex;
     align-items: center;
     flex-direction: row;
-    margin: 50px -800px 20px 60px;
+    margin: 50px -800px 40px 60px;
   }
 
   .status-now {
@@ -486,7 +499,5 @@
     font-weight: 700;
     color: #d44d44;
   }
-  .el-step{
-    width: 200px;
-  }
+  
 </style>
