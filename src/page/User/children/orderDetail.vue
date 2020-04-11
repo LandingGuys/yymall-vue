@@ -157,8 +157,6 @@
         orderTotal:'',
         loading: true,
         countTime:'',
-       
-       
       }
     },
     methods: {
