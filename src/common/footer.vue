@@ -10,7 +10,7 @@
     </div>
     <div class="cop">
       <!-- <p>Copyright © 2019-2020  wast.club 版权所有</p> -->
-      <p>Copyright © 2019 · 天空之城 · 服务器赞助: <a href="https://www.aliyun.com/?utm_content=se_1000301881" target="_blank">阿里云</a> ·
+      <p>Copyright © 2019 · 智慧药房商城 · 服务器赞助: <a href="https://www.aliyun.com/?utm_content=se_1000301881" target="_blank">阿里云</a> ·
         <a href="http://www.beian.miit.gov.cn" target="_blank">豫ICP备19035962号</a> </p>
     </div>
 
