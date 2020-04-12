@@ -1,11 +1,18 @@
 <template>
   <div class="footer">
     <div class="tag">
-      <a href="javascript:;">简体</a>
-      <a href="javascript:;">繁体</a>
-      <a href="javascript:;">English</a>
-      <a href="javascript:;">常见问题</a></div>
-    <div class="cop"><p>Copyright © 2004-2017  xx.com 版权所有</p></div>
+    <p>
+        友情链接
+        <a href="http://www.wast.club" target="_blank" style="margin-left: 10px">天空之城社区平台</a>
+        <a href="http://admall.wast.club/" target="_blank" style="margin-left: 10px">智慧药房后台管理系统</a>
+        <a href="https://m.kuaidi100.com/" target="_blank" style="margin-left: 10px">快递查询</a>
+    </p>
+    </div>
+    <div class="cop">
+      <!-- <p>Copyright © 2019-2020  wast.club 版权所有</p> -->
+      <p>Copyright © 2019 · 天空之城 · 服务器赞助: <a href="https://www.aliyun.com/?utm_content=se_1000301881" target="_blank">阿里云</a> ·
+        <a href="http://www.beian.miit.gov.cn" target="_blank">豫ICP备19035962号</a> </p>
+    </div>
 
   </div>
 </template>
