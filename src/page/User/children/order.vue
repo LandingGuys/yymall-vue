@@ -125,11 +125,11 @@
         } else if (status === 20) {
           return '已付款'
         } else if (status === 30 ) {
-          return '待收货'
-        } else if (status === 40 ) {
           return '已发货'
+        } else if (status === 40 ) {
+          return '已收货'
         } else if (status === 50 ) {
-          return '交易关闭'
+          return '交易完成'
         } else if (status === 60 ) {
           return '支付失败'
         }

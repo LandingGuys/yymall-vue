@@ -12,7 +12,7 @@
                 :key="i"
                 class="address pr"
                 :class="{checked:addressId === item.id}"
-                @click="chooseAddress(item.id)">
+                @click="chooseAddress(item.id,item.receiverName,item.receiverMobile,item.receiverCity)">
            <span v-if="addressId === item.id" class="pa">
              <svg viewBox="0 0 1473 1024" width="17.34375" height="12">
              <path
@@ -126,7 +126,7 @@
           <y-button text='保存'
                     class="btn"
                     :classStyle="btnHighlight?'main-btn':'disabled-btn'"
-                    @btnClick="save({shippingId:msg.addressId,receiverName:msg.userName,receiverMobile:msg.tel,receiverCity:msg.streetName})">
+                    @btnClick="save({shippingId:msg.addressId,receiverName:msg.userName,receiverMobile:msg.tel,receiverCity:msg.streetName,isDefault:msg.isDefault})">
           </y-button>
         </div>
       </y-popup>
@@ -206,10 +206,16 @@
           let data = res.data.list
           if (data.length) {
             this.addList = data
-            this.addressId = data[0].addressId || '1'
-            this.userName = data[0].receiverName
-            this.tel = data[0].receiverMobile
-            this.streetName = data[0].receiverCity
+            console.log(this.addList)
+            this.addList.forEach(item =>{
+              if(item.isDefault === true){
+                this.addressId = item.id
+                this.userName = item.receiverName
+                this.tel = item.receiverMobile
+                this.streetName = item.receiverCity
+              }
+            })
+            console.log(this.addressId)
           } else {
             this.addList = []
           }
@@ -295,11 +301,11 @@
         })
       },
       // 选择地址
-      chooseAddress (addressId) {
+      chooseAddress (addressId,userName,tel,streetName) {
         this.addressId = addressId
-        // this.userName = userName
-        // this.tel = tel
-        // this.streetName = streetName
+        this.userName = userName
+        this.tel = tel
+        this.streetName = streetName
       },
       // 修改
       update (item) {

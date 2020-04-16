@@ -32,7 +32,7 @@ router.beforeEach(function (to, from, next) {
       if (whiteList.indexOf(to.path) !== -1) {
         next()
       } else {
-        Element.Message.error(res.msg)
+        // Element.Message.error(res.msg)
         next('/login')
       }
     } else {

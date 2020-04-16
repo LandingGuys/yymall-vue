@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { getStore } from '/utils/storage'
-axios.defaults.timeout = 10000
+axios.defaults.timeout = 30000
 axios.defaults.headers.post['Content-Type'] = 'application/json'
 axios.interceptors.request.use(config => {
   //  console.log(config)

@@ -74,6 +74,14 @@ export const orderList = (params) => {
 export const getOrderDet = (params) => {
   return http.fetchGet(`${baseUrl}/user/orderDetail/` + params.orderNo, params)
 }
+// 确认收货
+export const receiptOrder = (params) => {
+  return http.fetchPut(`${baseUrl}/user/orderReceipt/` + params.orderNo, params)
+}
+// 完成订单
+export const finishOrder = (params) => {
+  return http.fetchPut(`${baseUrl}/user/orderFinish/` + params.orderNo, params)
+}
 // 取消订单
 export const cancelOrder = (params) => {
   return http.fetchPut(`${baseUrl}/user/orderDetail/` + params.orderNo, params)
@@ -82,7 +90,14 @@ export const cancelOrder = (params) => {
 export const delOrder = (params) => {
   return http.fetchDelete(`${baseUrl}/user/order/` + params.orderNo, params)
 }
-
+// 获取物流信息
+export const transpGet = (params) => {
+  return http.fetchGet(`${baseUrl}/transportation`, params)
+}
+// 获取物流运输轨迹
+export const transpTrack = (params) => {
+  return http.fetchPost(`${baseUrl}/transportation/track`, params)
+}
 // 快速搜索
 export const getQuickSearch = (params) => {
   return http.fetchGet(`${baseUrl}/products/search`, params)

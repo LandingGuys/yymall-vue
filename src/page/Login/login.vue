@@ -51,7 +51,7 @@
             <a @click="_oauth(qq)"><img  style="height: 25px; margin-top: 22px;" src="/static/svg/qq.svg"></a>
             <a @click="_oauth(baidu)"><img  style="height: 25px; margin-top: 22px; margin-left:20px" src="/static/svg/baidu.svg"></a>
             <a @click="_oauth(weibo)"><img  style="height: 25px; margin-top: 22px; margin-left:20px" src="/static/svg/weibo.svg"></a>
-            <a @click="_oauth(github)"><img  style="height: 25px; margin-top: 22px; margin-left:20px" src="/static/svg/github.svg"></a>
+            <!-- <a @click="_oauth(github)"><img  style="height: 25px; margin-top: 22px; margin-left:20px" src="/static/svg/github.svg"></a> -->
           </div>
         </div>
       </div>

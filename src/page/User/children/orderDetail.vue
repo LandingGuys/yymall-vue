@@ -8,8 +8,8 @@
               <el-step title="下单" v-bind:description="createTime | formatDate"></el-step>
               <el-step title="付款" v-bind:description="payTime | formatDate"></el-step>
               <el-step title="出库" v-bind:description="sendTime | formatDate"></el-step>
-               <el-step title="收货" v-bind:description="receiverTime | formatDate"></el-step>
-              <el-step title="交易成功" v-bind:description="endTime | formatDate"></el-step>
+               <el-step title="收货" v-bind:description="endTime | formatDate"></el-step>
+              <el-step title="交易成功" v-bind:description="closeTime | formatDate"></el-step>
             </el-steps>
           </div>
           <div class="orderStatus-close" v-if="orderStatus === -1">
@@ -51,10 +51,33 @@
           <div class="status-now" v-if="orderStatus === 3">
             <ul>
               <li class="status-title"><h3>订单状态：已发货，待收货</h3></li>
+              <li class="button">
+                <el-button @click="handleTrace(orderId)" type="primary" size="small">订单追踪</el-button>
+                <el-button @click="_ReciptOrder(orderId)" size="small">确认收货</el-button>
+              </li>
             </ul>
-             <p class="realtime">
-              <span>请耐心等待，货物正在快马加鞭向你赶来</span>
+            <ul >
+              <li class="realtime">
+                 <span>请耐心等待，货物正在快马加鞭向你赶来</span>
+              </li>
+              <li class="button">
+                  <span style="margin-right:10px">物流公司：{{transp.logisticsCa}}</span>
+                  <span>物流单号：</span><span><a @click="handleTrace(orderId)">{{transp.logisticsNo}}</a></span>
+              </li>
+            </ul>
+            
+          </div>
+           <div class="status-now" v-if="orderStatus === 4">
+            <ul>
+              <li class="status-title"><h3>订单状态：已收货</h3></li>
+              <li class="button">
+                <el-button @click="handleFinish(orderId)" type="primary" size="small">完成订单</el-button>
+              </li>
+            </ul>
+            <p class="realtime">
+              <span>请尽快确认完成订单！！！确认收货后 7 天将自动确认完成订单！！！</span>
             </p>
+            
           </div>
           <div class="status-now" v-if="orderStatus === -1 || orderStatus === 6">
             <ul>
@@ -129,10 +152,24 @@
       </div>
     </y-shelf>
 
+    <el-dialog title="订单跟踪"
+             :visible.sync="dialogTrackVisible"
+             width="40%">
+            <el-steps direction="vertical"
+                      :active="stepActive"
+                      finish-status="success"
+                      space="50px">
+              <el-step  v-for="item in TrackList"
+                        :key="item.AcceptStation"
+                        :title="item.AcceptStation"
+                        :description="item.AcceptTime"></el-step>
+            </el-steps>
+    </el-dialog>
+
   </div>
 </template>
 <script>
-  import { getOrderDet, cancelOrder } from '/api/goods'
+  import { getOrderDet, cancelOrder , transpGet, transpTrack,receiptOrder,finishOrder} from '/api/goods'
   import YShelf from '/components/shelf'
   import { getStore } from '/utils/storage'
   import countDown from '/components/countDown'
@@ -157,6 +194,13 @@
         orderTotal:'',
         loading: true,
         countTime:'',
+        transp:{
+          logisticsCa:'',
+          logisticsNo: ''
+        },
+        dialogTrackVisible: false,
+        TrackList:[],
+        stepActive: 0
       }
     },
     methods: {
@@ -173,6 +217,62 @@
          window.location.href = window.location.origin + '/#/goodsDetails?productId=' + id
        // window.open(window.location.origin + '/goodsDetails?productId=' + id)
       },
+      handleFinish(orderId){
+        finishOrder({orderNo: orderId}).then(res => {
+          if (res.status === 0) {
+            this._getOrderDet()
+          } else {
+            this.message('取消失败')
+          }
+        })
+      },
+      _ReciptOrder(orderId){
+        receiptOrder({orderNo: orderId}).then(res => {
+          if (res.status === 0) {
+            this._getOrderDet()
+          } else {
+            this.message('取消失败')
+          }
+        })
+      },
+      handleTrace(orderId){  
+        this.dialogTrackVisible = true
+        // this._transpGet(orderId)
+        this._transpTrack()
+        
+      },
+      async _transpGet(orderId){
+         let params={
+                orderNo:orderId
+            }
+        const res = await transpGet(params)
+        if(res.status !== 0){
+          this.$message.error(res.msg)
+        }
+        this.transp = res.data
+      },
+      async _transpTrack(){
+        let params={
+          params:{
+            expCode: this.transp.logisticsCa,
+            expNo: this.transp.logisticsNo
+          }
+        }
+        const res = await transpTrack(params.params)
+        if(res.status !==0){
+          this.$message.error(res.msg)
+        }
+        if(res.data.Reason === "暂无轨迹信息"){
+          this.TrackList = [{
+            AcceptStation:"暂无轨迹信息",
+            AcceptTime: "暂无轨迹信息"
+            }]
+        }else{
+          this.TrackList = res.data.Traces
+          this.stepActive = this.TrackList.length
+        }
+        
+       },
       async _getOrderDet () {
         let params = {
              orderNo: this.orderId
@@ -186,18 +286,19 @@
               this.orderStatus = 1
           } else if(res.data.status === 20){
               this.orderStatus = 2
-          } else if(res.data.status === 40){
-              this.orderStatus = 3
           } else if(res.data.status === 30){
+              this.orderStatus = 3
+          } else if(res.data.status === 40){
               this.orderStatus = 4
           } else if(res.data.status === 50){
               this.orderStatus = 5
           } else if(res.data.status === 60){
               this.orderStatus = 6
           }
-         
+          if(this.orderStatus === 3){
+            this._transpGet(this.orderId)
+          }
           this.orderList = res.data.orderItemVoList
-          //console.log(this.orderList)
           this.orderTotal = await res.data.payment
           this.userName = res.data.receiverName
           this.tel = res.data.receiverPhone
@@ -206,15 +307,14 @@
           this.payTime = res.data.paymentTime
           this.sendTime = res.data.sendTime
           this.closeTime = res.data.closeTime
-          if (this.orderStatus === 5) {
+          
             this.endTime = res.data.endTime
-          } else {
+          
             let sdate=new Date(res.data.createTime)
             sdate.setMinutes(sdate.getMinutes()+30);
             var ss = sdate.getTime();
             this.countTime = (new Date(ss).toLocaleString('chinese',{hour12:false})).replace(/\//g,'-')
           
-          }
           this.loading = false
         } else {
           

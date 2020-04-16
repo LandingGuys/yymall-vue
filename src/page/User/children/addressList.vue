@@ -45,13 +45,13 @@
         <div>
           <input type="text" placeholder="收货地址" v-model="msg.streetName">
         </div>
-        <!-- <div>
+        <div>
           <el-checkbox class="auto-login" v-model="msg.isDefault">设为默认</el-checkbox>
-        </div> -->
+        </div>
         <y-button text='保存'
                   class="btn"
                   :classStyle="btnHighlight?'main-btn':'disabled-btn'"
-                  @btnClick="save({shippingId:msg.addressId,receiverName:msg.userName,receiverMobile:msg.tel,receiverCity:msg.streetName})">
+                  @btnClick="save({shippingId:msg.addressId,receiverName:msg.userName,receiverMobile:msg.tel,receiverCity:msg.streetName,isDefault:msg.isDefault})">
         </y-button>
       </div>
     </y-popup>
@@ -103,7 +103,7 @@
         })
       },
       _addressUpdate (params) {
-        // console.log(params)
+        //console.log(params)
         addressUpdate(params).then(res => {
           this._addressList()
         })
@@ -120,6 +120,7 @@
       changeDef (item) {
         if (!item.isDefault) {
           item.isDefault = true
+          item.shippingId = item.id
           this._addressUpdate(item)
         }
         return false
